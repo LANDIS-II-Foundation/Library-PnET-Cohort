@@ -250,7 +250,7 @@ namespace Landis.Library.PnETCohorts
                 // Evaporation is limited to frost free soil above EvapDepth
                 float evapSoilDepth = Math.Min(sitecohorts.Ecoregion.RootingDepth * frostFreeProp, sitecohorts.Ecoregion.EvapDepth);
 
-                float pressurehead = pressureheadtable[sitecohorts.Ecoregion, (int)Math.Round(Water * 100)];
+                /*float pressurehead = pressureheadtable[sitecohorts.Ecoregion, (int)Math.Round(Water * 100)];
 
                 // Evaporation begins to decline at 75% of field capacity (Robock et al. 1995)
                 // Robock, A., Vinnikov, K. Y., Schlosser, C. A., Speranskaya, N. A., & Xue, Y. (1995). Use of midlatitude soil moisture and meteorological observations to validate soil moisture simulations with biosphere and bucket models. Journal of Climate, 8(1), 15-35.
@@ -259,7 +259,7 @@ namespace Landis.Library.PnETCohorts
 
                 // Delivery potential is 1 if pressurehead < evapCritWater, and declines to 0 at wilting point (153 mH2O)
                 DeliveryPotential = Cohort.ComputeFWater(-1, -1, evapCritWaterPH, 153, pressurehead);
-
+                */
                 //float AEmax = DeliveryPotential * PET;  // Actual Evaporation max mm/month
                 float AEmax = PET; // Modified 11/4/22 in v 5.0-rc19; remove access limitation and only use physical limit at wilting point below
 

@@ -22,6 +22,9 @@ namespace Landis.Library.PnETCohorts
         public static ISiteVar<double> SmolderConsumption;
         public static ISiteVar<double> FlamingConsumption;
         public static ISiteVar<Landis.Library.PnETCohorts.SiteCohorts> SiteCohorts;
+        public static ISiteVar<float[]> MonthlyPressureHead;
+        public static ISiteVar<SortedList<float, float>[]> MonthlySoilTemp;
+        public static ISiteVar<float> FieldCapacity;
 
         public static void Initialize()
         {
@@ -35,6 +38,9 @@ namespace Landis.Library.PnETCohorts
             ClimaticWaterDeficit = Globals.ModelCore.Landscape.NewSiteVar<Double>();
             SmolderConsumption = Globals.ModelCore.Landscape.NewSiteVar<Double>();
             FlamingConsumption = Globals.ModelCore.Landscape.NewSiteVar<Double>();
+            MonthlyPressureHead = Globals.ModelCore.Landscape.NewSiteVar<float[]>();
+            MonthlySoilTemp = Globals.ModelCore.Landscape.NewSiteVar<SortedList<float, float>[]>();
+            FieldCapacity = Globals.ModelCore.Landscape.NewSiteVar<float>();
 
             Globals.ModelCore.RegisterSiteVar(WoodyDebris, "Succession.WoodyDebris");
             Globals.ModelCore.RegisterSiteVar(Litter, "Succession.Litter");
@@ -45,6 +51,9 @@ namespace Landis.Library.PnETCohorts
             Globals.ModelCore.RegisterSiteVar(ClimaticWaterDeficit, "Succession.CWD");
             Globals.ModelCore.RegisterSiteVar(SmolderConsumption, "Succession.SmolderConsumption");
             Globals.ModelCore.RegisterSiteVar(FlamingConsumption, "Succession.FlamingConsumption");
+            Globals.ModelCore.RegisterSiteVar(MonthlyPressureHead, "Succession.MonthlyPressureHead");
+            Globals.ModelCore.RegisterSiteVar(MonthlySoilTemp, "Succession.MonthlySoilTemp");
+            Globals.ModelCore.RegisterSiteVar(FieldCapacity, "Succession.SoilFieldCapacity");
         }
 
     }

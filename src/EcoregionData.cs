@@ -39,7 +39,7 @@ namespace Landis.Library.PnETCohorts
         #region private static variables
         private static bool wythers;
         private static bool dtemp;
-        private static string etMethod;
+        //private static string etMethod;
         private static float etExtCoeff;
         private static float retCropCoeff;
 
@@ -378,7 +378,7 @@ namespace Landis.Library.PnETCohorts
             precintconst = (Landis.Library.Parameters.Ecoregions.AuxParm<float>)(Parameter<float>)Names.GetParameter("PrecIntConst", 0, 1);
             preclossfrac = (Landis.Library.Parameters.Ecoregions.AuxParm<float>)(Parameter<float>)Names.GetParameter("PrecLossFrac", 0, 1);
             snowsublimfrac = (Landis.Library.Parameters.Ecoregions.AuxParm<float>)(Parameter<float>)Names.GetParameter("SnowSublimFrac", 0, 1);
-            latitude = (Landis.Library.Parameters.Ecoregions.AuxParm<float>)(Parameter<float>)Names.GetParameter("Latitude", -90, 90);
+            latitude = (Landis.Library.Parameters.Ecoregions.AuxParm<float>)(Parameter<float>)Names.GetParameter("Latitude", 0, 90);
             leakageFrostDepth = (Landis.Library.Parameters.Ecoregions.AuxParm<float>)(Parameter<float>)Names.GetParameter("LeakageFrostDepth", 0, 999999);
             precipEvents = (Landis.Library.Parameters.Ecoregions.AuxParm<int>)(Parameter<int>)Names.GetParameter("PrecipEvents", 1, 100);
             winterSTD = (Landis.Library.Parameters.Ecoregions.AuxParm<float>)(Parameter<float>)Names.GetParameter("WinterSTD", 0, 100);
@@ -387,7 +387,7 @@ namespace Landis.Library.PnETCohorts
 
             wythers = ((Parameter<bool>)Names.GetParameter("Wythers")).Value;
             dtemp = ((Parameter<bool>)Names.GetParameter("DTemp")).Value;
-            etMethod = ((Parameter<string>)Names.GetParameter("ETMethod")).Value;
+            //etMethod = ((Parameter<string>)Names.GetParameter("ETMethod")).Value;
             etExtCoeff = ((Parameter<float>)Names.GetParameter("ETExtCoeff")).Value;
             retCropCoeff = ((Parameter<float>)Names.GetParameter("RETCropCoeff")).Value;
 

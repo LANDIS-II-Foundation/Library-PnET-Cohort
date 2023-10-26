@@ -45,7 +45,7 @@ namespace Landis.Library.PnETCohorts
         public const string PrecipEventsWithReplacement = "PrecipEventsWithReplacement";
         public const string Parallel = "Parallel";
         public const string CohortStacking = "CohortStacking";
-        public const string ETMethod = "ETMethod";
+        //public const string ETMethod = "ETMethod";
         public const string ETExtCoeff = "ETExtCoeff";
         public const string RETCropCoeff = "RETCropCoeff";
         public const string CanopySumScale = "CanopySumScale";

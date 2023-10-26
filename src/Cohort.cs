@@ -1440,14 +1440,15 @@ namespace Landis.Library.PnETCohorts
                 float Ca0 = 350;  // 350
                 float Ca0_adj = Ca0 * cicaRatio;  // Calculated internal concentration given external 350
 
-
+                /*
                 // Franks method (Franks,2013, New Phytologist, 197:1077-1094)
                 float delamax = (variables.CO2 - Gamma) / (variables.CO2 + 2 * Gamma) * (Ca0 + 2 * Gamma) / (Ca0 - Gamma);
                 if (delamax < 0)
                 {
                     delamax = 0;
                 }
-
+                */
+                /*
                 // Franks method (Franks,2013, New Phytologist, 197:1077-1094)
                 // Adj Ca0
                 float delamax_adj = (variables.CO2 - Gamma) / (variables.CO2 + 2 * Gamma) * (Ca0_adj + 2 * Gamma) / (Ca0_adj - Gamma);
@@ -1455,6 +1456,7 @@ namespace Landis.Library.PnETCohorts
                 {
                     delamax_adj = 0;
                 }
+                */
 
                 // Modified Franks method - by M. Kubiske
                 // substitute ciElev for CO2
@@ -1464,6 +1466,7 @@ namespace Landis.Library.PnETCohorts
                     delamaxCi = 0;
                 }
 
+                /*
                 // Modified Franks method - by M. Kubiske
                 // substitute ciElev for CO2
                 // adjusted Ca0
@@ -1471,7 +1474,7 @@ namespace Landis.Library.PnETCohorts
                 if (delamaxCi_adj < 0)
                 {
                     delamaxCi_adj = 0;
-                }
+                }*/
 
                 // Choose between delamax methods here:
                 //DelAmax[index] = delamax;  // Franks

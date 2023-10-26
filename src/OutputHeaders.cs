@@ -37,7 +37,7 @@ namespace Landis.Library.PnETCohorts
         public const string availableWater = "Available Water (mm)";
         public const string SurfaceWater = "Surface Water (mm)";
         public const string Leakage = "Leakage(mm)";
-        public const string PressureHead = "PressureHead(mm)";
+        public const string PressureHead = "PressureHead(m)";
         public const string SnowPack = "SnowPack(mm)";
         public const string LAI = "LAI(m2)";
         public const string LAISite = "Site LAI(m2)";
