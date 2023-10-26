@@ -1999,12 +1999,19 @@ namespace Landis.Library.PnETCohorts
 
                             float PETnonfor = PETcumulative - TransCumulative - InterceptCumulative - hydrology.Evaporation; // hydrology.Evaporation is cumulative
 
-                            
+                            // ---------------------------------------------------------
+                            // Growth reduction ranges from 1.0 (total) to none (0.0).
+                            // Growth reduction is calculated by a disturbance function, typically an extension
+                            // with a dedicated calculator.  The method CohortGrowthReduction.Compute is a delegate method
+                            // and lives within the disturbance extension.
 
-                            
+                            float growthReduction = (float) Library.BiomassCohorts.CohortGrowthReduction.Compute(c, this.Site);
+
+
+
                             success = c.CalculatePhotosynthesis(subCanopyPrecip, precipCount, leakageFrac, ref hydrology, mainLayerPAR,
                                 ref subcanopypar, O3_ppmh, O3_ppmh_month, subCanopyIndex, SubCanopyCohorts.Count(), ref O3Effect,
-                                propRootAboveFrost, subCanopyMelt, coldKillBoolean, data[m], this, sumCanopyProp, subCanopyPET, AllowMortality);
+                                propRootAboveFrost, subCanopyMelt, coldKillBoolean, data[m], this, sumCanopyProp, subCanopyPET, growthReduction, AllowMortality );
                             if (success == false)
                             {
                                 throw new System.Exception("Error CalculatePhotosynthesis");

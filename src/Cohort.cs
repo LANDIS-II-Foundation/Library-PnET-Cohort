@@ -990,7 +990,7 @@ namespace Landis.Library.PnETCohorts
         }
         //---------------------------------------------------------------------
         // Photosynthesis by canopy layer
-        public bool CalculatePhotosynthesis(float PrecInByCanopyLayer,int precipCount, float leakageFrac, ref Hydrology hydrology, float mainLayerPAR, ref float SubCanopyPar, float o3_cum, float o3_month, int subCanopyIndex, int layerCount, ref float O3Effect, float frostFreeProp, float MeltInByCanopyLayer, bool coldKillBoolean, IEcoregionPnETVariables variables, SiteCohorts siteCohort, float sumCanopyProp,float groundPETbyEvent, bool allowMortality = true)
+        public bool CalculatePhotosynthesis(float PrecInByCanopyLayer,int precipCount, float leakageFrac, ref Hydrology hydrology, float mainLayerPAR, ref float SubCanopyPar, float o3_cum, float o3_month, int subCanopyIndex, int layerCount, ref float O3Effect, float frostFreeProp, float MeltInByCanopyLayer, bool coldKillBoolean, IEcoregionPnETVariables variables, SiteCohorts siteCohort, float sumCanopyProp,float groundPETbyEvent,float growthReduction, bool allowMortality = true)
         {      
             bool success = true;
             float lastO3Effect = O3Effect;
@@ -1480,11 +1480,11 @@ namespace Landis.Library.PnETCohorts
                 //DelAmax[index] = delamaxCi_adj;  // Modified Franks with adjusted Ca0
 
                 // M. Kubiske method for wue calculation:  Improved methods for calculating WUE and Transpiration in PnET.
-                float V = (float)(8314.47 * (variables.Tmin + 273) / 101.3);
+                float V = (float)(8314.47 * (variables.Tmin + 273F) / 101.3);
                 float JCO2 = (float)(0.139 * ((variables.CO2 - ciElev) / V) * 0.000001);  // Corrected conversion units 11/29/22
                 float JH2O = variables[species.Name].JH2O / ciModifier;  // Modified from * to / 11.18.2022 [mod1]
                 //float JH2O = variables[species.Name].JH2O;  // Modified 11.22.2022 [mod2, mod3]
-                float wue = (JCO2 / JH2O) * (44 / 18);  //44=mol wt CO2; 18=mol wt H2O; constant =2.44444444444444
+                float wue = (JCO2 / JH2O) * (44F / 18F);  //44=mol wt CO2; 18=mol wt H2O; constant =2.44444444444444
                 float Amax = (float)(delamaxCi * (speciesPnET.AmaxA + variables[species.Name].AmaxB_CO2 * adjFolN)); //nmole CO2/g Fol/s
                 float BaseFolResp = variables[species.Name].BaseFolRespFrac * Amax; //nmole CO2/g Fol/s
                 float AmaxAdj = Amax * speciesPnET.AmaxFrac;  //Amax adjustment as applied in PnET
@@ -1494,10 +1494,10 @@ namespace Landis.Library.PnETCohorts
                 float RefGrossPsn = variables.DaySpan * (GrossAmax * variables[species.Name].DVPD * variables.Daylength * Constants.MC) / Constants.billion;
 
                 // Compute gross psn from stress factors and reference gross psn (gC/g Fol/month)
-                // Reduction factors include temperature (FTempPSN), water (FWater), light (FRad), age (Fage)
+                // Reduction factors include temperature (FTempPSN), water (FWater), light (FRad), age (Fage), reduction from disturbance (growthReduction)
                 //GrossPsn[index] = (1 / (float)Globals.IMAX) * variables[species.Name].FTempPSN * FWater[index] * FRad[index] * Fage * RefGrossPsn * Fol;  // gC/m2 ground/mo
                 // Remove FWater from psn reduction because it is accounted for in WUE through ciModifier [mod2, mod3]
-                float GrossPsnPotential = (1 / (float)Globals.IMAX) * variables[species.Name].FTempPSN * FRad[index] * Fage * RefGrossPsn * Fol;  // gC/m2 ground/mo
+                float GrossPsnPotential = (1F / (float)Globals.IMAX) * variables[species.Name].FTempPSN * FRad[index] * Fage * (1F - growthReduction) * RefGrossPsn * Fol;  // gC/m2 ground/mo
                 
 
                 // M. Kubiske equation for transpiration: Improved methods for calculating WUE and Transpiration in PnET.
