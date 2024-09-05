@@ -79,7 +79,7 @@ namespace Landis.Library.PnETCohorts
                             || this.SpeciesPnET.Lifeform.ToLower().Contains("open")
                             || this.SumLAI == 0))
                 {
-                    albedo = 0.24F;
+                    albedo = 0.20F;
                 }
                 else if ((!string.IsNullOrEmpty(this.SpeciesPnET.Lifeform))
                     && this.SpeciesPnET.Lifeform.ToLower().Contains("dark"))

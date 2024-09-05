@@ -2089,9 +2089,10 @@ namespace Landis.Library.PnETCohorts
                             // Growth reduction is calculated by a disturbance function, typically an extension
                             // with a dedicated calculator.  The method CohortGrowthReduction.Compute is a delegate method
                             // and lives within the disturbance extension.
-
-                            float growthReduction = (float) Library.BiomassCohorts.CohortGrowthReduction.Compute(c, this.Site);
-
+                            // growthReduction is only relevant during leaf-on growing season months
+                            float growthReduction = 0F;
+                            if (data[m].Tmin > spc.LeafOnMinT)
+                                growthReduction = (float) Library.BiomassCohorts.CohortGrowthReduction.Compute(c, this.Site);
 
 
                             success = c.CalculatePhotosynthesis(subCanopyPrecip, precipCount, leakageFrac, ref hydrology, mainLayerPAR,
