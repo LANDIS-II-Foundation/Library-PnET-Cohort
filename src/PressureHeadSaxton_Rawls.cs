@@ -44,12 +44,13 @@ namespace Landis.Library.PnETCohorts
             {
                 try
                 {
-                    if (water >= table[ecoregion].Length) return 0;
+                    if (water >= table[ecoregion].Length)
+                        return 0;
                     return table[ecoregion][water];
                 }
-                catch (System.Exception e)
+                catch
                 {
-                    throw new System.Exception("Cannot get pressure head for water content " + water);
+                    throw new Exception("Cannot get pressure head for water content " + water);
                 }
             }
         }

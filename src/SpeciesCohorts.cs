@@ -352,8 +352,6 @@ namespace Landis.Library.PnETCohorts
         //---------------------------------------------------------------------
 
         private static SpeciesCohortBoolArray isSpeciesCohortDamaged;
-        private ushort age_key;
-        private int initialWoodBiomass;
 
         //---------------------------------------------------------------------
 

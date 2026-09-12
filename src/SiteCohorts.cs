@@ -589,7 +589,6 @@ namespace Landis.Library.PnETCohorts
                     {
                         int layer = cohort.Layer;
                         int layerCount = cohortBins[layer].Count();
-                        float denomSum = 0f;
                         float canopyLayerProp = Math.Min(canopyProportions[cohort], cohort.CanopyGrowingSpace);
 
                         canopyLayerProp = Math.Min(canopyProportions[cohort], 1f / layerCount);
@@ -1427,7 +1426,6 @@ namespace Landis.Library.PnETCohorts
             List<int> cohortAges = new List<int>();
             List<List<int>> rawBins = new List<List<int>>();
             int subLayerIndex = 0;
-            bool reducedLayer = false;
             for (int cohort = 0; cohort < AllCohorts.Count(); cohort++)
             {
                 string lifeForm = AllCohorts[cohort].SpeciesPnET.Lifeform.ToLower();

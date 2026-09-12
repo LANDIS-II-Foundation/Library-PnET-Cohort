@@ -356,7 +356,7 @@ namespace Landis.Library.PnETCohorts
                         {
                             all_values[ecoregion].Add(date, ecoregion_variables);
                         }
-                        catch (System.ArgumentException e)
+                        catch
                         {
                             continue;
                         }
