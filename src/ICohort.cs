@@ -10,13 +10,16 @@ namespace Landis.Library.PnETCohorts
     public interface ICohort : UniversalCohorts.ICohort
     {
         new CohortData Data { get; }
+        ushort Age { get; set; }
+        int Biomass { get; set; }
+        double ANPP { get; set; }
+        float NSC { get; set; }
+        float Fol { get; set; }
+        float MaxFolYear { get; set; }
         int AGBiomass { get; }
         int TotalBiomass { get; }
         bool Leaf_On { get; }
         float BiomassMax { get; }
-        float Fol { get; }
-        float MaxFolYear { get; }
-        float NSC { get; }
         float DeFolProp { get; }
         float LastWoodySenescence { get; }
         float LastFoliageSenescence { get; }

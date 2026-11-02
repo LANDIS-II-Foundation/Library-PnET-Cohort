@@ -22,6 +22,17 @@ namespace Landis.Library.PnETCohorts
         private bool firstYear;
         private LocalOutput cohortoutput;
 
+        /// <summary>
+        /// The cohort's data
+        /// </summary>
+        public CohortData Data
+        {
+            get
+            {
+                return data;
+            }
+        }
+
         // Age (years)
         public ushort Age
         {
@@ -29,9 +40,39 @@ namespace Landis.Library.PnETCohorts
             {
                 return data.UniversalData.Age;
             }
+            set
+            {
+                data.UniversalData.Age = value;
+            }
         }
 
-        // Non soluble carbons
+        // Aboveground Biomass (g/m2) scaled to the site
+        public int Biomass
+        {
+            get
+            {
+                // return (int)(data.AGBiomass * data.CanopyLayerProp);
+                return data.UniversalData.Biomass;
+            }
+            set
+            {
+                data.UniversalData.Biomass = value;
+            }
+        }
+
+        public double ANPP
+        {
+            get
+            {
+                return data.UniversalData.ANPP;
+            }
+            set
+            {
+                data.UniversalData.ANPP = value;
+            }
+        }
+
+        // Non-structural carbohydrates
         public float NSC
         {
             get
@@ -44,14 +85,16 @@ namespace Landis.Library.PnETCohorts
             }
         }
 
-        /// <summary>
-        /// The cohort's data
-        /// </summary>
-        public CohortData Data
+        // Foliage biomass (g/m2)
+        public float Fol
         {
             get
             {
-                return data;
+                return data.Fol;
+            }
+            set
+            {
+                data.Fol = value;
             }
         }
 
@@ -100,28 +143,6 @@ namespace Landis.Library.PnETCohorts
 
                 // Do not allow albedo to be negative
                 return albedo > 0 ? albedo : 0;
-            }
-        }
-
-        // Foliage biomass (g/m2)
-        public float Fol
-        {
-            get
-            {
-                return data.Fol;
-            }
-            set
-            {
-                data.Fol = value;
-            }
-        }
-
-        // Aboveground Biomass (g/m2) scaled to the site
-        public int Biomass
-        {
-            get
-            {
-                return (int)(data.AGBiomass * data.CanopyLayerProp);
             }
         }
 
@@ -572,18 +593,6 @@ namespace Landis.Library.PnETCohorts
             set
             {
                 data.CanopyGrowingSpace = value;
-            }
-        }
-
-        public double ANPP
-        {
-            get
-            {
-                return data.UniversalData.ANPP;
-            }
-            set
-            {
-                data.UniversalData.ANPP = value;
             }
         }
 
