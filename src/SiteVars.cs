@@ -55,6 +55,51 @@ namespace Landis.Library.PnETCohorts
             Globals.ModelCore.RegisterSiteVar(FieldCapacity, "Succession.SoilFieldCapacity");
         }
 
+        //MG20261102
+        public static bool FindMatchingCohort(ActiveSite site, Library.UniversalCohorts.ICohort cohort)
+        {
+            bool foundMatch = false;
+            foreach (Library.UniversalCohorts.ISpeciesCohorts speciesUnivCohort in UniversalCohorts[site])
+            {
+                foreach (Library.UniversalCohorts.ICohort univCohort in speciesUnivCohort)
+                {
+                    if ((univCohort.Species == cohort.Species)
+                        && (univCohort.Data.Age == cohort.Age)
+                        && (univCohort.Data.ANPP == cohort.ANPP))
+                    {
+                        foundMatch = true;
+                        Globals.ModelCore.UI.WriteLine("    PnET SiteCohort for site {0}, species {1}, age {2}, PnET biomass {3} --> Univ biomass {4}.",
+                                                      site.DataIndex, cohort.Species, cohort.Age, cohort.Biomass, univCohort.Data.Biomass);
+                        cohort.Biomass = univCohort.Data.Biomass;
+                        return foundMatch;
+                    }
+                }
+            }
+            return foundMatch;
+        }
+
+        //MG20261102
+        public static void UpdatePnETCohorts()
+        {
+            Globals.ModelCore.UI.WriteLine("Updating PnET SiteCohorts with UniversalCohorts data.");
+            foreach (ActiveSite site in Globals.ModelCore.Landscape)
+            {
+                foreach (Library.UniversalCohorts.ISpeciesCohorts pnetSpeciesCohorts in SiteCohorts[site])
+                {
+                    foreach (Library.UniversalCohorts.ICohort pnetCohort in pnetSpeciesCohorts)
+                    {
+                        bool matchingCohort = FindMatchingCohort(site, pnetCohort);
+                        if (!matchingCohort)
+                        {
+                            Globals.ModelCore.UI.WriteLine("    No matching UniversalCohort found for site {0}, species {1}, age {2} --> removing PnET SiteCohort",
+                                                           site.DataIndex, cohort.Species, cohort.Age);
+                            SiteCohorts.RemoveCohort(pnetCohort, new ExtensionType(Names.ExtensionName+":external"));
+                        }
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Copy basic PnET Cohort information (Age, Biomass, ANPP)
         /// to *new* Universal Cohorts for use in other extensions.
