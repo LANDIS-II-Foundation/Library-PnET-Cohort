@@ -71,8 +71,8 @@ namespace Landis.Library.PnETCohorts
                         int delta = univCohort.Data.Biomass - pnetCohort.Data.Biomass;
                         if (delta > 0)
                         {
-                            Globals.ModelCore.UI.WriteLine("    PnET SiteCohort for site {0}, species {1}, age {2}, PnET biomass {3} --> Univ biomass {4}.",
-                                                        site.DataIndex, pnetCohort.Species.Name, pnetCohort.Data.Age, pnetCohort.Data.Biomass, univCohort.Data.Biomass);
+                            Globals.ModelCore.UI.WriteLine("   PnET SiteCohort for site {0}, species {1}, age {2}, PnET biomass {3} --> Univ biomass {4}.",
+                                                           site.DataIndex, pnetCohort.Species.Name, pnetCohort.Data.Age, pnetCohort.Data.Biomass, univCohort.Data.Biomass);
                             pnetCohort.ChangeBiomass(delta);
                         }
                         return foundMatch;
@@ -88,17 +88,15 @@ namespace Landis.Library.PnETCohorts
             Globals.ModelCore.UI.WriteLine("Updating PnET SiteCohorts with UniversalCohorts data.");
             foreach (ActiveSite site in Globals.ModelCore.Landscape)
             {
-                // foreach (ISpeciesCohorts pnetSpeciesCohorts in SiteCohorts[site])
                 foreach (Library.UniversalCohorts.ISpeciesCohorts pnetSpeciesCohorts in SiteCohorts[site])
                 {
-                    // foreach (ICohort pnetCohort in pnetSpeciesCohorts)
                     foreach (Library.UniversalCohorts.ICohort pnetCohort in pnetSpeciesCohorts)
                     {
                         bool matchingCohort = FindMatchingCohort(site, pnetCohort);
                         if (!matchingCohort)
                         {
-                            Globals.ModelCore.UI.WriteLine("    No matching UniversalCohort found for site {0}, species {1}, age {2} --> removing PnET SiteCohort",
-                                                           site.DataIndex, pnetCohort.Species, pnetCohort.Data.Age);
+                            Globals.ModelCore.UI.WriteLine("   No matching UniversalCohort found for site {0}, species {1}, age {2} --> removing PnET SiteCohort",
+                                                           site.DataIndex, pnetCohort.Species.Name, pnetCohort.Data.Age);
                             // PnETCohorts.SiteCohorts.RemoveCohort(pnetCohort, new ExtensionType(Names.ExtensionName+":external"));
                         }
                     }
@@ -119,16 +117,9 @@ namespace Landis.Library.PnETCohorts
             foreach (ActiveSite site in Globals.ModelCore.Landscape)
             {
                 UniversalCohorts[site] = new Library.UniversalCohorts.SiteCohorts();
-                // foreach (Library.UniversalCohorts.ISpeciesCohorts speciesCohort in SiteCohorts[site])
-                // foreach (ISpeciesCohorts pnetSpeciesCohorts in SiteCohorts[site])
                 foreach (Library.UniversalCohorts.ISpeciesCohorts pnetSpeciesCohorts in SiteCohorts[site])
                 {
-                    // foreach (Library.UniversalCohorts.ICohort cohort in speciesCohort)
-                    // foreach (ICohort pnetCohort in pnetSpeciesCohorts)
                     foreach (Library.UniversalCohorts.ICohort pnetCohort in pnetSpeciesCohorts)
-                        // UniversalCohorts[site].AddNewCohort(cohort.Species, cohort.Data.Age,
-                        //                                     (int)cohort.Data.Biomass, cohort.Data.ANPP,
-                        //                                     cohort.Data.AdditionalParameters);
                         UniversalCohorts[site].AddNewCohort(pnetCohort.Species, pnetCohort.Data.Age,
                                                             pnetCohort.Data.Biomass, pnetCohort.Data.ANPP,
                                                             new System.Dynamic.ExpandoObject());
