@@ -59,9 +59,9 @@ namespace Landis.Library.PnETCohorts
         public static bool FindMatchingCohort(ActiveSite site, ICohort pnetCohort)
         {
             bool foundMatch = false;
-            foreach (Library.UniversalCohorts.ISpeciesCohorts speciesUnivCohort in UniversalCohorts[site])
+            foreach (Library.UniversalCohorts.ISpeciesCohorts univSpeciesCohort in UniversalCohorts[site])
             {
-                foreach (Library.UniversalCohorts.ICohort univCohort in speciesUnivCohort)
+                foreach (Library.UniversalCohorts.ICohort univCohort in univSpeciesCohort)
                 {
                     if ((univCohort.Species == pnetCohort.Species)
                         && (univCohort.Data.Age == pnetCohort.Age)
@@ -113,11 +113,13 @@ namespace Landis.Library.PnETCohorts
             foreach (ActiveSite site in Globals.ModelCore.Landscape)
             {
                 UniversalCohorts[site] = new Library.UniversalCohorts.SiteCohorts();
-                // foreach(Library.UniversalCohorts.ISpeciesCohorts speciesCohort in SiteCohorts[site])
-                foreach (ISpeciesCohorts pnetSpeciesCohorts in SiteCohorts[site])
+                // foreach (Library.UniversalCohorts.ISpeciesCohorts speciesCohort in SiteCohorts[site])
+                // foreach (ISpeciesCohorts pnetSpeciesCohorts in SiteCohorts[site])
+                foreach (Library.UniversalCohorts.ISpeciesCohorts pnetSpeciesCohorts in SiteCohorts[site])
                 {
                     // foreach (Library.UniversalCohorts.ICohort cohort in speciesCohort)
-                    foreach (ICohort pnetCohort in pnetSpeciesCohorts)
+                    // foreach (ICohort pnetCohort in pnetSpeciesCohorts)
+                    foreach (Library.UniversalCohorts.ICohort pnetCohort in pnetSpeciesCohorts)
                         // UniversalCohorts[site].AddNewCohort(cohort.Species, cohort.Data.Age,
                         //                                     (int)cohort.Data.Biomass, cohort.Data.ANPP,
                         //                                     cohort.Data.AdditionalParameters);
