@@ -70,7 +70,8 @@ namespace Landis.Library.PnETCohorts
                         foundMatch = true;
                         Globals.ModelCore.UI.WriteLine("    PnET SiteCohort for site {0}, species {1}, age {2}, PnET biomass {3} --> Univ biomass {4}.",
                                                        site.DataIndex, pnetCohort.Species, pnetCohort.Data.Age, pnetCohort.Data.Biomass, univCohort.Data.Biomass);
-                        pnetCohort.Data.Biomass = univCohort.Data.Biomass;
+                        int delta = univCohort.Data.Biomass - pnetCohort.Data.Biomass;
+                        pnetCohort.ChangeBiomass(delta);
                         return foundMatch;
                     }
                 }
