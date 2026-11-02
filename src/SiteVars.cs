@@ -64,13 +64,13 @@ namespace Landis.Library.PnETCohorts
                 foreach (Library.UniversalCohorts.ICohort univCohort in univSpeciesCohort)
                 {
                     if ((univCohort.Species == pnetCohort.Species)
-                        && (univCohort.Data.Age == pnetCohort.Data.UniversalData.Age)
-                        && (univCohort.Data.ANPP == pnetCohort.Data.UniversalData.ANPP))
+                        && (univCohort.Data.Age == pnetCohort.Data.Age)
+                        && (univCohort.Data.ANPP == pnetCohort.Data.ANPP))
                     {
                         foundMatch = true;
                         Globals.ModelCore.UI.WriteLine("    PnET SiteCohort for site {0}, species {1}, age {2}, PnET biomass {3} --> Univ biomass {4}.",
-                                                      site.DataIndex, pnetCohort.Species, pnetCohort.Data.UniversalData.Age, pnetCohort.Data.UniversalData.Biomass, univCohort.Data.Biomass);
-                        pnetCohort.Data.UniversalData.Biomass = univCohort.Data.Biomass;
+                                                       site.DataIndex, pnetCohort.Species, pnetCohort.Data.Age, pnetCohort.Data.Biomass, univCohort.Data.Biomass);
+                        pnetCohort.Data.Biomass = univCohort.Data.Biomass;
                         return foundMatch;
                     }
                 }
