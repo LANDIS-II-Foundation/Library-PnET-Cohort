@@ -84,16 +84,18 @@ namespace Landis.Library.PnETCohorts
             Globals.ModelCore.UI.WriteLine("Updating PnET SiteCohorts with UniversalCohorts data.");
             foreach (ActiveSite site in Globals.ModelCore.Landscape)
             {
-                foreach (ISpeciesCohorts pnetSpeciesCohorts in SiteCohorts[site])
+                // foreach (ISpeciesCohorts pnetSpeciesCohorts in SiteCohorts[site])
+                foreach (Library.UniversalCohorts.ISpeciesCohorts pnetSpeciesCohorts in SiteCohorts[site])
                 {
-                    foreach (ICohort pnetCohort in pnetSpeciesCohorts)
+                    // foreach (ICohort pnetCohort in pnetSpeciesCohorts)
+                    foreach (Library.UniversalCohorts.ICohort pnetCohort in pnetSpeciesCohorts)
                     {
                         bool matchingCohort = FindMatchingCohort(site, pnetCohort);
                         if (!matchingCohort)
                         {
                             Globals.ModelCore.UI.WriteLine("    No matching UniversalCohort found for site {0}, species {1}, age {2} --> removing PnET SiteCohort",
                                                            site.DataIndex, pnetCohort.Species, pnetCohort.Age);
-                            // SiteCohorts.RemoveCohort(pnetCohort, new ExtensionType(Names.ExtensionName+":external"));
+                            // PnETCohorts.SiteCohorts.RemoveCohort(pnetCohort, new ExtensionType(Names.ExtensionName+":external"));
                         }
                     }
                 }
