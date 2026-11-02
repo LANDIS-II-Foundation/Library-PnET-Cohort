@@ -56,20 +56,20 @@ namespace Landis.Library.PnETCohorts
         }
 
         //MG20261102
-        public static bool FindMatchingCohort(ActiveSite site, Library.UniversalCohorts.ICohort cohort)
+        public static bool FindMatchingCohort(ActiveSite site, ICohort pnetCohort)
         {
             bool foundMatch = false;
             foreach (Library.UniversalCohorts.ISpeciesCohorts speciesUnivCohort in UniversalCohorts[site])
             {
                 foreach (Library.UniversalCohorts.ICohort univCohort in speciesUnivCohort)
                 {
-                    if ((univCohort.Species == cohort.Species)
-                        && (univCohort.Data.Age == cohort.Age)
-                        && (univCohort.Data.ANPP == cohort.ANPP))
+                    if ((univCohort.Species == pnetCohort.Species)
+                        && (univCohort.Data.Age == pnetCohort.Age)
+                        && (univCohort.Data.ANPP == pnetCohort.ANPP))
                     {
                         foundMatch = true;
                         Globals.ModelCore.UI.WriteLine("    PnET SiteCohort for site {0}, species {1}, age {2}, PnET biomass {3} --> Univ biomass {4}.",
-                                                      site.DataIndex, cohort.Species, cohort.Age, cohort.Biomass, univCohort.Data.Biomass);
+                                                      site.DataIndex, pnetCohort.Species, pnetCohort.Age, pnetCohort.Biomass, univCohort.Data.Biomass);
                         cohort.Biomass = univCohort.Data.Biomass;
                         return foundMatch;
                     }
@@ -84,9 +84,9 @@ namespace Landis.Library.PnETCohorts
             Globals.ModelCore.UI.WriteLine("Updating PnET SiteCohorts with UniversalCohorts data.");
             foreach (ActiveSite site in Globals.ModelCore.Landscape)
             {
-                foreach (Library.UniversalCohorts.ISpeciesCohorts pnetSpeciesCohorts in SiteCohorts[site])
+                foreach (ISpeciesCohorts pnetSpeciesCohorts in SiteCohorts[site])
                 {
-                    foreach (Library.UniversalCohorts.ICohort pnetCohort in pnetSpeciesCohorts)
+                    foreach (ICohort pnetCohort in pnetSpeciesCohorts)
                     {
                         bool matchingCohort = FindMatchingCohort(site, pnetCohort);
                         if (!matchingCohort)
@@ -113,12 +113,17 @@ namespace Landis.Library.PnETCohorts
             foreach (ActiveSite site in Globals.ModelCore.Landscape)
             {
                 UniversalCohorts[site] = new Library.UniversalCohorts.SiteCohorts();
-                foreach(Library.UniversalCohorts.ISpeciesCohorts speciesCohort in SiteCohorts[site])
+                // foreach(Library.UniversalCohorts.ISpeciesCohorts speciesCohort in SiteCohorts[site])
+                foreach (ISpeciesCohorts pnetSpeciesCohorts in SiteCohorts[site])
                 {
-                    foreach (Library.UniversalCohorts.ICohort cohort in speciesCohort)
-                        UniversalCohorts[site].AddNewCohort(cohort.Species, cohort.Data.Age,
-                                                            (int)cohort.Data.Biomass, cohort.Data.ANPP,
-                                                            cohort.Data.AdditionalParameters);
+                    // foreach (Library.UniversalCohorts.ICohort cohort in speciesCohort)
+                    foreach (ICohort pnetCohort in pnetSpeciesCohorts)
+                        // UniversalCohorts[site].AddNewCohort(cohort.Species, cohort.Data.Age,
+                        //                                     (int)cohort.Data.Biomass, cohort.Data.ANPP,
+                        //                                     cohort.Data.AdditionalParameters);
+                        UniversalCohorts[site].AddNewCohort(pnetCohort.Species, pnetCohort.Age,
+                                                            pnetCohort.Biomass, pnetCohort.ANPP,
+                                                            new System.Dynamic.ExpandoObject());
                 }
                 if (SiteCohorts[site] != null && UniversalCohorts[site] == null)
                     throw new Exception("Cannot convert PnET SiteCohorts to Universal Cohorts");
