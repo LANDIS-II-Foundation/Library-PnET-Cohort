@@ -123,8 +123,8 @@ namespace Landis.Library.PnETCohorts
                         // UniversalCohorts[site].AddNewCohort(cohort.Species, cohort.Data.Age,
                         //                                     (int)cohort.Data.Biomass, cohort.Data.ANPP,
                         //                                     cohort.Data.AdditionalParameters);
-                        UniversalCohorts[site].AddNewCohort(pnetCohort.Species, pnetCohort.Age,
-                                                            pnetCohort.Biomass, pnetCohort.ANPP,
+                        UniversalCohorts[site].AddNewCohort(pnetCohort.Species, pnetCohort.Data.Age,
+                                                            pnetCohort.Data.Biomass, pnetCohort.Data.ANPP,
                                                             new System.Dynamic.ExpandoObject());
                 }
                 if (SiteCohorts[site] != null && UniversalCohorts[site] == null)
