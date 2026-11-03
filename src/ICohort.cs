@@ -9,7 +9,7 @@ namespace Landis.Library.PnETCohorts
     /// </summary>
     public interface ICohort : UniversalCohorts.ICohort
     {
-        new CohortData Data { get; }
+        CohortData Data { get; set; }
         ushort Age { get; set; }
         int Biomass { get; set; }
         double ANPP { get; set; }
