@@ -1,4 +1,13 @@
-// uses dominance to allocate psn and subtract transpiration from soil water, average cohort vars over layer
+//MG20261103
+// NOTE that this Cohort class inherits from the UniversalCohorts
+//      Cohort class (and uses the same name) as well as implementing
+//      the local ICohort interface. Having Parent and Child classes
+//      use the same name and some of the same-named variables and methods
+//      is demonic and should be banned. Having them in different namespaces
+//      is no excuse. It seems to have broken communication with other
+//      extensions through the Universal Cohorts Library, and I'm trying to
+//      figure out how to fix and/or work with it. I'm hoping to doesn't
+//      come to renaming whole classes in PnET-Succession, but...
 
 using System;
 using System.Collections.Generic;
