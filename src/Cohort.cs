@@ -24,6 +24,8 @@ namespace Landis.Library.PnETCohorts
 
         /// <summary>
         /// The cohort's data
+        /// NOTE this overwrites the inherited UniversalCohorts.Cohort Data 
+        ///      variable with the local (PnETCohorts) CohortData type.
         /// </summary>
         public CohortData Data
         {
@@ -33,7 +35,16 @@ namespace Landis.Library.PnETCohorts
             }
         }
 
-        // Age (years)
+        /// <summary>
+        /// Cohort Age (years)
+        /// MG20261103
+        /// NOTE this connects to the inherited UniversalCohorts.Cohort Age 
+        ///      variable and stores it locally in the (PnETCohorts) CohortData
+        ///      class under a UniversalData subclass, which is actually the 
+        ///      UniversalCohorts CohortData class. This is *supposed* to keep
+        ///      the the value in the two versions of the Age variable synchronized,
+        ///      so other extensions can use it from UniversalCohorts. Tricky...
+        /// </summary>
         public override ushort Age
         {
             get
@@ -46,7 +57,16 @@ namespace Landis.Library.PnETCohorts
             }
         }
 
-        // Aboveground Biomass (g/m2) scaled to the site
+        /// <summary>
+        /// Cohort Aboveground Biomass (g/m2) scaled to the site
+        /// MG20261103
+        /// NOTE this connects to the inherited UniversalCohorts.Cohort Biomass 
+        ///      variable and stores it locally in the (PnETCohorts) CohortData
+        ///      class under a UniversalData subclass, which is actually the 
+        ///      UniversalCohorts CohortData class. This is *supposed* to keep
+        ///      the the value in the two versions of the Biomass variable synchronized,
+        ///      so other extensions can use it from UniversalCohorts. Tricky...
+        /// </summary>
         public override int Biomass
         {
             get
@@ -59,6 +79,16 @@ namespace Landis.Library.PnETCohorts
             }
         }
 
+        /// <summary>
+        /// Annual Net Primary Productivity (ANPP) (g/y)
+        /// MG20261103
+        /// NOTE this connects to the inherited UniversalCohorts.Cohort ANPP 
+        ///      variable and stores it locally in the (PnETCohorts) CohortData
+        ///      class under a UniversalData subclass, which is actually the 
+        ///      UniversalCohorts CohortData class. This is *supposed* to keep
+        ///      the the value in the two versions of the ANPP variable synchronized,
+        ///      so other extensions can use it from UniversalCohorts. Tricky...
+        /// </summary>
         public override double ANPP
         {
             get
@@ -110,6 +140,9 @@ namespace Landis.Library.PnETCohorts
             }
         }
 
+        //MG20261103 TODO move this to a new Albedo class, along with the
+        //           version for calculating albedo with snow in SiteCohorts.cs
+        //
         // Measure of cohort's diffuse reflection of solar radiation 
         // as a fraction of total solar radiation, without snow reflectance.
         public float Albedo
@@ -204,7 +237,8 @@ namespace Landis.Library.PnETCohorts
         }
 
         /// <summary>
-        /// Boolean whether cohort has been killed by cold temp relative to cold tolerance
+        /// Whether cohort has been killed by cold temp relative to cold tolerance
+        /// NOTE int type, not bool
         /// </summary>
         public int ColdKill
         {
