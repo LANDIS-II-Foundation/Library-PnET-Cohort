@@ -12,9 +12,9 @@ namespace Landis.Library.PnETCohorts
     public struct CohortData
     {
         /// <summary>
-        /// The cohort instance
+        /// The PnET cohort instance
         /// </summary>
-        public Cohort Cohort;
+        public PnETCohorts.Cohort Cohort;
 
         /// <summary>
         /// UniversalCohort data fields (Age, Biomass, and ANPP)

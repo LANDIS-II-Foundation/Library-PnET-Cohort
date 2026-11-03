@@ -36,7 +36,7 @@ namespace Landis.Library.PnETCohorts
         /// NOTE this overwrites the inherited UniversalCohorts.Cohort Data 
         ///      variable with the local (PnETCohorts) CohortData type.
         /// </summary>
-        public override PnETCohorts.CohortData Data
+        public new PnETCohorts.CohortData Data
         {
             get
             {
@@ -287,7 +287,7 @@ namespace Landis.Library.PnETCohorts
             }
         }
 
-        // Species with PnET parameter additions
+        // PnET species (with PnET parameter additions)
         public ISpeciesPnET SpeciesPnET
         {
             get
@@ -297,7 +297,7 @@ namespace Landis.Library.PnETCohorts
         }
 
         // LANDIS species (without PnET parameter additions)
-        public Landis.Core.ISpecies Species
+        public override Landis.Core.ISpecies Species
         {
             get
             {
