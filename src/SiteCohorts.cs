@@ -1146,7 +1146,7 @@ namespace Library.PnETCohorts
             return random_range;
         }
 
-        public void SetAet(float value, int Month)
+        public void SetAET(float value, int Month)
         {
             AET[Month-1] = value;
         }
@@ -2035,7 +2035,7 @@ namespace Library.PnETCohorts
                     }
                 }
                 float AET = hydrology.Evaporation + TransCumulative + InterceptCumulative;
-                this.SetAet(AET, data[m].Month);
+                this.SetAET(AET, data[m].Month);
                 this.SetPET(PETcumulative);
                 SiteVars.ClimaticWaterDeficit[this.Site] += PETcumulative - AET;
                 // Add surface water to soil
