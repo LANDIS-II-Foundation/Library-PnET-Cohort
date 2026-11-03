@@ -42,7 +42,7 @@ namespace Landis.Library.PnETCohorts
         ///      variable and stores it locally in the (PnETCohorts) CohortData
         ///      class under a UniversalData subclass, which is actually the 
         ///      UniversalCohorts CohortData class. This is *supposed* to keep
-        ///      the the value in the two versions of the Age variable synchronized,
+        ///      the value in the two versions of the Age variable synchronized,
         ///      so other extensions can use it from UniversalCohorts. Tricky...
         /// </summary>
         public override ushort Age
@@ -64,7 +64,7 @@ namespace Landis.Library.PnETCohorts
         ///      variable and stores it locally in the (PnETCohorts) CohortData
         ///      class under a UniversalData subclass, which is actually the 
         ///      UniversalCohorts CohortData class. This is *supposed* to keep
-        ///      the the value in the two versions of the Biomass variable synchronized,
+        ///      the value in the two versions of the Biomass variable synchronized,
         ///      so other extensions can use it from UniversalCohorts. Tricky...
         /// </summary>
         public override int Biomass
@@ -86,7 +86,7 @@ namespace Landis.Library.PnETCohorts
         ///      variable and stores it locally in the (PnETCohorts) CohortData
         ///      class under a UniversalData subclass, which is actually the 
         ///      UniversalCohorts CohortData class. This is *supposed* to keep
-        ///      the the value in the two versions of the ANPP variable synchronized,
+        ///      the value in the two versions of the ANPP variable synchronized,
         ///      so other extensions can use it from UniversalCohorts. Tricky...
         /// </summary>
         public override double ANPP
