@@ -1659,7 +1659,7 @@ namespace Landis.Library.PnETCohorts
         /// <summary>
         /// Occurs when a cohort is killed by an age-only disturbance.
         /// </summary>
-        public override event DeathEventHandler<DeathEventArgs> AgeOnlyDeathEvent;
+        public new static event DeathEventHandler<DeathEventArgs> AgeOnlyDeathEvent;
 
         /// <summary>
         /// Occurs when a cohort dies either due to senescence or biomass
