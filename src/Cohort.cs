@@ -25,7 +25,7 @@ namespace Landis.Library.PnETCohorts
         /// <summary>
         /// The cohort's data
         /// </summary>
-        public override CohortData Data
+        public CohortData Data
         {
             get
             {
