@@ -22,7 +22,7 @@ using Landis.Library.UniversalCohorts;
 using Landis.SpatialModeling;
 using Landis.Utilities;
 
-namespace Library.PnETCohorts
+namespace Landis.Library.PnETCohorts
 {
     public class SiteCohorts : Library.UniversalCohorts.SiteCohorts, ISiteCohorts
     {
