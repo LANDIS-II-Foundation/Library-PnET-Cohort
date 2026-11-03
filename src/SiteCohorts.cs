@@ -3176,7 +3176,7 @@ namespace Landis.Library.PnETCohorts
             }
         }
 
-        public override void RemoveMarkedCohorts()
+        private void RemoveMarkedCohorts()
         {
             for (int c = cohorts.Values.Count - 1; c >= 0; c--)
             {
