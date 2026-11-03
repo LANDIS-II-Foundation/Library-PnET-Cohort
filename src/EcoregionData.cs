@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using Landis.Core;
 using Landis.Library.Climate;
 
-namespace Library.PnETCohorts
+namespace Landis.Library.PnETCohorts
 {
     /// <summary>
     /// The information for a tree species (its index and parameters).
