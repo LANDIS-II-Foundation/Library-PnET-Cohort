@@ -3176,7 +3176,7 @@ namespace Landis.Library.PnETCohorts
             }
         }
 
-        private override void RemoveMarkedCohorts()
+        public override void RemoveMarkedCohorts()
         {
             for (int c = cohorts.Values.Count - 1; c >= 0; c--)
             {
@@ -3255,14 +3255,8 @@ namespace Landis.Library.PnETCohorts
 
         /// <summary>
         /// Add a new site cohort
-        /// MG20261103
-        /// NOTE this connects to the inherited UniversalCohorts.SiteCohorts
-        ///      AddNewCohort method and stores it locally in the (PnETCohorts)
-        ///      SiteCohort class. This is *supposed* to keep the two versions
-        ///      of a SiteCohort synchronized, so other extensions can use it 
-        ///      from UniversalCohorts. Tricky...
         /// </summary>
-        public override bool AddNewCohort(Cohort newCohort)
+        public bool AddNewCohort(Cohort newCohort)
         {
             bool addCohort = false;
             if (cohorts.ContainsKey(newCohort.Species))
