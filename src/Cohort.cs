@@ -743,7 +743,7 @@ namespace Landis.Library.PnETCohorts
         /// <summary>
         /// Increments the cohort's age by one year.
         /// </summary>
-        public void IncrementAge()
+        public override void IncrementAge()
         {
             // data.UniversalData.Age += 1;
             Age += 1;
@@ -752,7 +752,7 @@ namespace Landis.Library.PnETCohorts
         /// <summary>
         /// Changes the cohort's biomass.
         /// </summary>
-        public void ChangeBiomass(int delta)
+        public override void ChangeBiomass(int delta)
         {
             float newTotalBiomass = data.TotalBiomass + delta;
             data.TotalBiomass = Math.Max(0, newTotalBiomass);
@@ -765,7 +765,7 @@ namespace Landis.Library.PnETCohorts
         /// <summary>
         /// Changes the cohort's ANPP.
         /// </summary>
-        public void ChangeANPP(double delta)
+        public override void ChangeANPP(double delta)
         {            
             // data.UniversalData.ANPP = data.UniversalData.ANPP + delta;
             ANPP += delta;
@@ -1659,7 +1659,7 @@ namespace Landis.Library.PnETCohorts
         /// <summary>
         /// Occurs when a cohort is killed by an age-only disturbance.
         /// </summary>
-        public static event DeathEventHandler<DeathEventArgs> AgeOnlyDeathEvent;
+        public override static event DeathEventHandler<DeathEventArgs> AgeOnlyDeathEvent;
 
         /// <summary>
         /// Occurs when a cohort dies either due to senescence or biomass

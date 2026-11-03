@@ -3133,7 +3133,7 @@ namespace Landis.Library.PnETCohorts
             }
         }
 
-        public Library.UniversalCohorts.ISpeciesCohorts this[ISpecies species]
+        public override Library.UniversalCohorts.ISpeciesCohorts this[ISpecies species]
         {
             get
             {
@@ -3246,7 +3246,7 @@ namespace Landis.Library.PnETCohorts
         ///      IsMaturePresent method with a local, more explicitly coded
         ///      version.
         /// </summary>
-        public bool IsMaturePresent(ISpecies species)
+        public override bool IsMaturePresent(ISpecies species)
         {
             bool speciesPresent = cohorts.ContainsKey(species);
             bool IsMaturePresent = (speciesPresent && (cohorts[species].Max(o => o.Age) >= species.Maturity)) ? true : false;
