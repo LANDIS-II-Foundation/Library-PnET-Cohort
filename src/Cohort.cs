@@ -36,7 +36,7 @@ namespace Landis.Library.PnETCohorts
         /// NOTE this overwrites the inherited UniversalCohorts.Cohort Data 
         ///      variable with the local (PnETCohorts) CohortData type.
         /// </summary>
-        public CohortData Data
+        public override PnETCohorts.CohortData Data
         {
             get
             {
