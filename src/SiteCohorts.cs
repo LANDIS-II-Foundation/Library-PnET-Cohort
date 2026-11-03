@@ -4436,45 +4436,41 @@ namespace Landis.Library.PnETCohorts
             if (disturbanceType.Name == Names.ExtensionName)
             {
                 CohortsKilledBySuccession[cohort.Species.Index] += 1;
-                Globals.ModelCore.UI.WriteLine($"   Removing {cohort.Species.Name} cohort by succession: age = {cohort.Age} y, biomass = {cohort.Biomass} g/m2");
+                // Globals.ModelCore.UI.WriteLine($"   Removing {cohort.Species.Name} cohort by succession: age = {cohort.Age} y, biomass = {cohort.Biomass} g/m2");
             }
             else if (disturbanceType.Name == (Names.ExtensionName+":Cold"))
             { 
                 CohortsKilledByCold[cohort.Species.Index] += 1;
-                Globals.ModelCore.UI.WriteLine($"   Removing {cohort.Species.Name} cohort by coldKill: age = {cohort.Age} y, biomass = {cohort.Biomass} g/m2");
+                // Globals.ModelCore.UI.WriteLine($"   Removing {cohort.Species.Name} cohort by coldKill: age = {cohort.Age} y, biomass = {cohort.Biomass} g/m2");
             }
             else if (disturbanceType.Name == "disturbance:harvest")
             {
                 CohortsKilledByHarvest[cohort.Species.Index] += 1;
-                Globals.ModelCore.UI.WriteLine($"   Removing {cohort.Species.Name} cohort by harvest: age = {cohort.Age} y, biomass = {cohort.Biomass} g/m2");
+                // Globals.ModelCore.UI.WriteLine($"   Removing {cohort.Species.Name} cohort by harvest: age = {cohort.Age} y, biomass = {cohort.Biomass} g/m2");
             }
             else if (disturbanceType.Name == "disturbance:fire")
             {
                 CohortsKilledByFire[cohort.Species.Index] += 1;
-                Globals.ModelCore.UI.WriteLine($"   Removing {cohort.Species.Name} cohort by fire: age = {cohort.Age} y, biomass = {cohort.Biomass} g/m2");
+                // Globals.ModelCore.UI.WriteLine($"   Removing {cohort.Species.Name} cohort by fire: age = {cohort.Age} y, biomass = {cohort.Biomass} g/m2");
             }
             else if (disturbanceType.Name == "disturbance:wind")
             {
                 CohortsKilledByWind[cohort.Species.Index] += 1;
-                Globals.ModelCore.UI.WriteLine($"   Removing {cohort.Species.Name} cohort by wind: age = {cohort.Age} y, biomass = {cohort.Biomass} g/m2");
+                // Globals.ModelCore.UI.WriteLine($"   Removing {cohort.Species.Name} cohort by wind: age = {cohort.Age} y, biomass = {cohort.Biomass} g/m2");
             }
             else
             {
                 CohortsKilledByOther[cohort.Species.Index] += 1;
-                Globals.ModelCore.UI.WriteLine($"   Removing {cohort.Species.Name} cohort by other disturbance: age = {cohort.Age} y, biomass = {cohort.Biomass} g/m2");
+                // Globals.ModelCore.UI.WriteLine($"   Removing {cohort.Species.Name} cohort by other disturbance: age = {cohort.Age} y, biomass = {cohort.Biomass} g/m2");
             }
 
             if (disturbanceType.Name != Names.ExtensionName)
-            {
                 Cohort.RaiseDeathEvent(this, cohort, Site, disturbanceType);
-            }
 
             cohorts[cohort.Species].Remove(cohort);
 
             if (cohorts[cohort.Species].Count == 0)
-            {
                 cohorts.Remove(cohort.Species);
-            }
 
             if (!DisturbanceTypesReduced.Contains(disturbanceType))
             {
