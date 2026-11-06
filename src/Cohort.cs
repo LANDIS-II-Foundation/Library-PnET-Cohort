@@ -80,7 +80,9 @@ namespace Landis.Library.PnETCohorts
         {
             get
             {
-                return data.UniversalData.Biomass;
+                int biomass = (int)(data.AGBiomass * data.CanopyLayerProp);
+                data.UniversalData.Biomass = biomass;
+                return biomass;
             }
             set
             {
@@ -892,7 +894,7 @@ namespace Landis.Library.PnETCohorts
             data.NSC = this.speciesPnET.DNSC * FActiveBiom * (data.TotalBiomass + data.Fol) * speciesPnET.CFracBiomass;
             // data.UniversalData.Biomass = (int)(data.AGBiomass * data.CanopyLayerProp);
             Biomass = (int)(data.AGBiomass * data.CanopyLayerProp);
-            ANPP = Biomass;
+            ANPP = 0.0;
             if (SiteName != null)
                 InitializeOutput(SiteName, firstYear);
         }
@@ -935,7 +937,7 @@ namespace Landis.Library.PnETCohorts
             Age = age;
             // data.UniversalData.Biomass = (int)(data.AGBiomass * data.CanopyLayerProp);
             Biomass = (int)(data.AGBiomass * data.CanopyLayerProp);
-            ANPP = Biomass;
+            ANPP = 0.0;
             if (SiteName != null)
                 InitializeOutput(SiteName, firstYear);
         }
@@ -1044,7 +1046,7 @@ namespace Landis.Library.PnETCohorts
             }
                 
             // Maintenance respiration depends on biomass,  non soluble carbon and temperature
-            data.MaintenanceRespiration[index] = 1 / (float)Globals.IMAX * (float)Math.Min(NSC, variables[Species.Name].MaintRespFTempResp * data.TotalBiomass * speciesPnET.CFracBiomass);  //gC //IMAXinverse
+            data.MaintenanceRespiration[index] = (1 / (float)Globals.IMAX) * (float)Math.Min(NSC, variables[Species.Name].MaintRespFTempResp * (data.TotalBiomass * speciesPnET.CFracBiomass));  //gC //IMAXinverse
             // Subtract mainenance respiration (gC/mo)
             data.NSC -= MaintenanceRespiration[index];
             if (data.NSC < 0)
@@ -1192,7 +1194,7 @@ namespace Landis.Library.PnETCohorts
                                     // Foliage allocation depends on availability of NSC (allows deficit at this time so no min nsc)
                                     // carbon fraction of biomass to convert C to DW
                                     //float Folalloc = Math.Max(0f, Math.Min(NSClimit, speciesPnET.CFracBiomass * (0.10f * IdealFol))); // gC/mo 10% of IdealFol to take out NSC 
-                                    FolCost = Math.Max(0, Math.Min(NSClimit, speciesPnET.CFracBiomass * speciesPnET.NonRefoliationCost * IdealFol)); // gC/mo variable proportion of IdealFol to take out NSC 
+                                    FolCost = Math.Max(0f, Math.Min(NSClimit, speciesPnET.CFracBiomass * (speciesPnET.NonRefoliationCost * IdealFol))); // gC/mo variable proportion of IdealFol to take out NSC 
 
                                     // Subtract from NSC do not add Fol
                                    // data.NSC -= Folalloc;
