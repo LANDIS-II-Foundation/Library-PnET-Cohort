@@ -310,8 +310,10 @@ namespace Landis.Library.PnETCohorts
             permafrost = false;
             Parameter<string> CohortBinSizeParm = null;
             if (Names.TryGetParameter(Names.CohortBinSize, out CohortBinSizeParm))
+            {
                 if (!Int32.TryParse(CohortBinSizeParm.Value, out CohortBinSize))
                     throw new Exception("CohortBinSize is not an integer value.");
+            }
             else
                 CohortBinSize = Timestep;
             string precipEventsWithReplacement = ((Parameter<string>)Names.GetParameter(Names.PrecipEventsWithReplacement)).Value;
