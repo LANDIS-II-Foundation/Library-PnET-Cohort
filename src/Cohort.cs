@@ -1854,7 +1854,6 @@ namespace Landis.Library.PnETCohorts
             data.TotalBiomass -= senescence;
             data.AGBiomass = (1 - speciesPnET.FracBelowG) * data.TotalBiomass + data.Fol;
             data.BiomassMax = Math.Max(data.BiomassMax, data.TotalBiomass);
-            // data.UniversalData.Biomass = (int)(data.AGBiomass * data.CanopyLayerProp);
             Biomass = (int)(data.AGBiomass * data.CanopyLayerProp);
             return senescence;
         }
@@ -1872,7 +1871,9 @@ namespace Landis.Library.PnETCohorts
 
         public void ReduceBiomass(object sitecohorts, double fraction, ExtensionType disturbanceType)
         {
-            if (!((SiteCohorts)sitecohorts).DisturbanceTypesReduced.Contains(disturbanceType))
+            // A harvest that removes nothing from this cohort leaves the site's dead pools alone
+            if ((fraction > 0.0 || disturbanceType.Name != "disturbance:harvest")
+                && !((SiteCohorts)sitecohorts).DisturbanceTypesReduced.Contains(disturbanceType))
             {
                 Allocation.ReduceDeadPools(sitecohorts, disturbanceType);  // Reduce dead pools before adding through Allocation
                 ((SiteCohorts)sitecohorts).DisturbanceTypesReduced.Add(disturbanceType);
@@ -1880,11 +1881,10 @@ namespace Landis.Library.PnETCohorts
             Allocation.Allocate(sitecohorts, this, disturbanceType, fraction);
 
             data.TotalBiomass *= (float)(1.0f - fraction);
+            Fol *= (float)(1.0 - fraction);
             data.AGBiomass = (1 - speciesPnET.FracBelowG) * data.TotalBiomass + data.Fol;
             data.BiomassMax = Math.Max(data.BiomassMax, data.TotalBiomass);
-            Fol *= (float)(1.0 - fraction);
             data.MaxFolYear = Math.Max(data.MaxFolYear, Fol);
-            // data.UniversalData.Biomass = (int)(data.AGBiomass * data.CanopyLayerProp);
             Biomass = (int)(data.AGBiomass * data.CanopyLayerProp);
         }
 
