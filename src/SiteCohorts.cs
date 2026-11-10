@@ -447,7 +447,9 @@ namespace Landis.Library.PnETCohorts
                             // TODO: Add warning if biomass is 0
                             int age = cohort.Data.Age;
                             ISpecies spp = cohort.Species;
-                            float[] values = cohortDictionary[spp][age];
+                            float[] values;
+                            if (!cohortDictionary[spp].TryGetValue(age, out values))
+                                values = cohortDictionary[spp].OrderBy(x => Math.Abs(x.Key - age)).First().Value;
                             int cohortMaxBiomass = (int)values[0];
                             float cohortSpinupBiomass = values[1];
                             float lastSeasonAvgFrad = values[2];
@@ -903,7 +905,9 @@ namespace Landis.Library.PnETCohorts
                                 {
                                     int age = cohort.Data.Age;
                                     ISpecies spp = cohort.Species;
-                                    float[] values = cohortDictionary[spp][age];
+                                    float[] values;
+                                    if (!cohortDictionary[spp].TryGetValue(age, out values))
+                                        values = cohortDictionary[spp].OrderBy(x => Math.Abs(x.Key - age)).First().Value;
                                     int cohortMaxBiomass = (int)values[0];
                                     float cohortSpinupBiomass = values[1];
                                     float lastSeasonAvgFrad = values[2];
@@ -960,7 +964,9 @@ namespace Landis.Library.PnETCohorts
                                 {
                                     int age = cohort.Data.Age;
                                     ISpecies spp = cohort.Species;
-                                    float[] values = cohortDictionary[spp][age];
+                                    float[] values;
+                                    if (!cohortDictionary[spp].TryGetValue(age, out values))
+                                        values = cohortDictionary[spp].OrderBy(x => Math.Abs(x.Key - age)).First().Value;
                                     int cohortMaxBiomass = (int)values[0];
                                     float cohortSpinupBiomass = values[1];
                                     float lastSeasonAvgFrad = values[2];
@@ -3265,7 +3271,9 @@ namespace Landis.Library.PnETCohorts
             {
                 // This should deliver only one KeyValuePair
                 KeyValuePair<ISpecies, List<Cohort>> i = new List<KeyValuePair<ISpecies, List<Cohort>>>(cohorts.Where(o => o.Key == newCohort.Species))[0];
-                List<Cohort> Cohorts = new List<Cohort>(i.Value.Where(o => o.Age < CohortBinSize));
+                List<Cohort> Cohorts = new List<Cohort>(i.Value.Where(o => newCohort.Age <= 1 
+                                                        ? o.Age < CohortBinSize
+                                                        : (o.Age - 1) / CohortBinSize == (newCohort.Age - 1) / CohortBinSize));
                 if (Cohorts.Count > 1)
                     foreach(Cohort Cohort in Cohorts.Skip(1))
                         newCohort.Accumulate(Cohort);
