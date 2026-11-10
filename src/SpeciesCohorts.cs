@@ -328,7 +328,7 @@ namespace Landis.Library.PnETCohorts
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return ((IEnumerable<ICohort>)this).GetEnumerator();
+            return ((IEnumerable<Library.UniversalCohorts.ICohort>)this).GetEnumerator();
         }
 
         IEnumerator<Library.UniversalCohorts.ICohort> IEnumerable<Library.UniversalCohorts.ICohort>.GetEnumerator()
