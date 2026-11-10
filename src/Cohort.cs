@@ -45,6 +45,21 @@ namespace Landis.Library.PnETCohorts
         }
 
         /// <summary>
+        /// Cohort Data via UCL
+        /// The cohort's data as other extensions read it, through the
+        /// UniversalCohorts ICohort interface.
+        /// MG20261110
+        /// </summary>
+        Library.UniversalCohorts.CohortData Library.UniversalCohorts.ICohort.Data
+        {
+            get
+            {
+                data.UniversalData.Biomass = (int)(data.AGBiomass * data.CanopyLayerProp);
+                return data.UniversalData;
+            }
+        }
+
+        /// <summary>
         /// Cohort Age (years)
         /// MG20261103
         /// NOTE this connects to the inherited UniversalCohorts.Cohort Age 
