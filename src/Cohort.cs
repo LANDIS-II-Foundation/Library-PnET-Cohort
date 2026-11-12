@@ -1,4 +1,13 @@
-// uses dominance to allocate psn and subtract transpiration from soil water, average cohort vars over layer
+//MG20261103
+// NOTE that this Cohort class inherits from the UniversalCohorts
+//      Cohort class (and uses the same name) as well as implementing
+//      the local ICohort interface. Having Parent and Child classes
+//      use the same name and some of the same-named variables and methods
+//      is demonic and should be banned. Having them in different namespaces
+//      is no excuse. It seems to have broken communication with other
+//      extensions through the Universal Cohorts Library, and I'm trying to
+//      figure out how to fix and/or work with it. I'm hoping to doesn't
+//      come to renaming whole classes in PnET-Succession, but...
 
 using System;
 using System.Collections.Generic;
@@ -12,26 +21,113 @@ using Landis.Utilities;
 
 namespace Landis.Library.PnETCohorts
 {
-    public class Cohort : UniversalCohorts.Cohort, ICohort
+    public class Cohort : Library.UniversalCohorts.Cohort, ICohort
     { 
         public delegate void SubtractTranspiration(float transpiration, ISpeciesPnET Species);
         public ushort index;
         private ISpecies species;
         private ISpeciesPnET speciesPnET;
-        private CohortData data;
+        private PnETCohorts.CohortData data;
         private bool firstYear;
         private LocalOutput cohortoutput;
 
-        // Age (years)
-        public ushort Age
+        /// <summary>
+        /// The cohort's data
+        /// NOTE this overwrites the inherited UniversalCohorts.Cohort Data 
+        ///      variable with the local (PnETCohorts) CohortData type.
+        /// </summary>
+        public new PnETCohorts.CohortData Data
+        {
+            get
+            {
+                return data;
+            }
+        }
+
+        /// <summary>
+        /// Cohort Data via UCL
+        /// The cohort's data as other extensions read it, through the
+        /// UniversalCohorts ICohort interface.
+        /// MG20261110
+        /// </summary>
+        Library.UniversalCohorts.CohortData Library.UniversalCohorts.ICohort.Data
+        {
+            get
+            {
+                data.UniversalData.Biomass = (int)(data.AGBiomass * data.CanopyLayerProp);
+                return data.UniversalData;
+            }
+        }
+
+        /// <summary>
+        /// Cohort Age (years)
+        /// MG20261103
+        /// NOTE this connects to the inherited UniversalCohorts.Cohort Age 
+        ///      variable and stores it locally in the (PnETCohorts) CohortData
+        ///      class under a UniversalData subclass, which is actually the 
+        ///      UniversalCohorts CohortData class. This is *supposed* to keep
+        ///      the value in the two versions of the Age variable synchronized,
+        ///      so other extensions can use it from UniversalCohorts. Tricky...
+        /// </summary>
+        public override ushort Age
         {
             get
             {
                 return data.UniversalData.Age;
             }
+            set
+            {
+                data.UniversalData.Age = value;
+            }
         }
 
-        // Non soluble carbons
+        /// <summary>
+        /// Cohort Aboveground Biomass (g/m2) scaled to the site
+        /// MG20261103
+        /// NOTE this connects to the inherited UniversalCohorts.Cohort Biomass 
+        ///      variable and stores it locally in the (PnETCohorts) CohortData
+        ///      class under a UniversalData subclass, which is actually the 
+        ///      UniversalCohorts CohortData class. This is *supposed* to keep
+        ///      the value in the two versions of the Biomass variable synchronized,
+        ///      so other extensions can use it from UniversalCohorts. Tricky...
+        /// </summary>
+        public override int Biomass
+        {
+            get
+            {
+                int biomass = (int)(data.AGBiomass * data.CanopyLayerProp);
+                data.UniversalData.Biomass = biomass;
+                return biomass;
+            }
+            set
+            {
+                data.UniversalData.Biomass = value;
+            }
+        }
+
+        /// <summary>
+        /// Annual Net Primary Productivity (ANPP) (g/y)
+        /// MG20261103
+        /// NOTE this connects to the inherited UniversalCohorts.Cohort ANPP 
+        ///      variable and stores it locally in the (PnETCohorts) CohortData
+        ///      class under a UniversalData subclass, which is actually the 
+        ///      UniversalCohorts CohortData class. This is *supposed* to keep
+        ///      the value in the two versions of the ANPP variable synchronized,
+        ///      so other extensions can use it from UniversalCohorts. Tricky...
+        /// </summary>
+        public override double ANPP
+        {
+            get
+            {
+                return data.UniversalData.ANPP;
+            }
+            set
+            {
+                data.UniversalData.ANPP = value;
+            }
+        }
+
+        // Non-structural carbohydrates
         public float NSC
         {
             get
@@ -44,14 +140,16 @@ namespace Landis.Library.PnETCohorts
             }
         }
 
-        /// <summary>
-        /// The cohort's data
-        /// </summary>
-        public CohortData Data
+        // Foliage biomass (g/m2)
+        public float Fol
         {
             get
             {
-                return data;
+                return data.Fol;
+            }
+            set
+            {
+                data.Fol = value;
             }
         }
 
@@ -68,6 +166,9 @@ namespace Landis.Library.PnETCohorts
             }
         }
 
+        //MG20261103 TODO move this to a new Albedo class, along with the
+        //           version for calculating albedo with snow in SiteCohorts.cs
+        //
         // Measure of cohort's diffuse reflection of solar radiation 
         // as a fraction of total solar radiation, without snow reflectance.
         public float Albedo
@@ -100,28 +201,6 @@ namespace Landis.Library.PnETCohorts
 
                 // Do not allow albedo to be negative
                 return albedo > 0 ? albedo : 0;
-            }
-        }
-
-        // Foliage biomass (g/m2)
-        public float Fol
-        {
-            get
-            {
-                return data.Fol;
-            }
-            set
-            {
-                data.Fol = value;
-            }
-        }
-
-        // Aboveground Biomass (g/m2) scaled to the site
-        public int Biomass
-        {
-            get
-            {
-                return (int)(data.AGBiomass * data.CanopyLayerProp);
             }
         }
 
@@ -184,7 +263,8 @@ namespace Landis.Library.PnETCohorts
         }
 
         /// <summary>
-        /// Boolean whether cohort has been killed by cold temp relative to cold tolerance
+        /// Whether cohort has been killed by cold temp relative to cold tolerance
+        /// NOTE int type, not bool
         /// </summary>
         public int ColdKill
         {
@@ -211,7 +291,7 @@ namespace Landis.Library.PnETCohorts
         {
             get
             {
-                return Math.Max(0, 1 - (float)Math.Pow(Age / (float)speciesPnET.Longevity, speciesPnET.PsnAgeRed));
+                return Math.Max(0.0f, 1.0f - (float)Math.Pow(Age / (float)speciesPnET.Longevity, speciesPnET.PsnAgeRed));
             }
         }
 
@@ -220,11 +300,11 @@ namespace Landis.Library.PnETCohorts
         {
             get
             {
-                return NSC / (FActiveBiom * (data.TotalBiomass + Fol)* SpeciesPnET.CFracBiomass);
+                return NSC / (FActiveBiom * (data.TotalBiomass + Fol) * SpeciesPnET.CFracBiomass);
             }
         }
 
-        // Species with PnET parameter additions
+        // PnET species (with PnET parameter additions)
         public ISpeciesPnET SpeciesPnET
         {
             get
@@ -234,12 +314,11 @@ namespace Landis.Library.PnETCohorts
         }
 
         // LANDIS species (without PnET parameter additions)
-        public Landis.Core.ISpecies Species
+        public override Landis.Core.ISpecies Species
         {
             get
             {
-                int sppIndex = species.Index;
-                return (Landis.Core.ISpecies)Globals.ModelCore.Species[sppIndex];
+                return (Landis.Core.ISpecies)Globals.ModelCore.Species[species.Index];
             }
         }
 
@@ -575,18 +654,6 @@ namespace Landis.Library.PnETCohorts
             }
         }
 
-        public double ANPP
-        {
-            get
-            {
-                return data.UniversalData.ANPP;
-            }
-            set
-            {
-                data.UniversalData.ANPP = value;
-            }
-        }
-
         // List of DisturbanceTypes that have had ReduceDeadPools applied
         public List<ExtensionType> ReducedTypes = null;
 
@@ -684,38 +751,41 @@ namespace Landis.Library.PnETCohorts
             data.Fol += cohort.Fol;
             data.MaxFolYear = Math.Max(MaxFolYear, data.Fol);
             data.AGBiomass = (1 - cohort.SpeciesPnET.FracBelowG) * data.TotalBiomass + data.Fol;
-
-            data.UniversalData.Biomass = (int)(data.AGBiomass * data.CanopyLayerProp);
-            data.UniversalData.ANPP += cohort.ANPP;
+            // data.UniversalData.Biomass = (int)(data.AGBiomass * data.CanopyLayerProp);
+            Biomass = (int)(data.AGBiomass * data.CanopyLayerProp);
+            // data.UniversalData.ANPP += cohort.ANPP;
+            ANPP += cohort.ANPP;
         }
 
         /// <summary>
         /// Increments the cohort's age by one year.
         /// </summary>
-        public void IncrementAge()
+        public override void IncrementAge()
         {
-            data.UniversalData.Age += 1;
+            // data.UniversalData.Age += 1;
+            Age += 1;
         }
 
         /// <summary>
         /// Changes the cohort's biomass.
         /// </summary>
-        public void ChangeBiomass(int delta)
+        public override void ChangeBiomass(int delta)
         {
             float newTotalBiomass = data.TotalBiomass + delta;
             data.TotalBiomass = Math.Max(0, newTotalBiomass);
             data.AGBiomass = (1 - SpeciesPnET.FracBelowG) * data.TotalBiomass + data.Fol;
             data.BiomassMax = Math.Max(data.BiomassMax, data.TotalBiomass);
-
-            data.UniversalData.Biomass = (int)(data.AGBiomass * data.CanopyLayerProp);
+            // data.UniversalData.Biomass = (int)(data.AGBiomass * data.CanopyLayerProp);
+            Biomass = (int)(data.AGBiomass * data.CanopyLayerProp);
         }
 
         /// <summary>
         /// Changes the cohort's ANPP.
         /// </summary>
-        public void ChangeANPP(double delta)
+        public override void ChangeANPP(double delta)
         {            
-            data.UniversalData.ANPP = data.UniversalData.ANPP + delta;
+            // data.UniversalData.ANPP = data.UniversalData.ANPP + delta;
+            ANPP += delta;
         }
 
         public Cohort(ISpecies species, ISpeciesPnET speciesPnET, ushort year_of_birth, string SiteName, double propBiomass, bool cohortStacking) // : base(species, 0, (int)(1F / species.DNSC * (ushort)species.InitialNSC))
@@ -724,30 +794,28 @@ namespace Landis.Library.PnETCohorts
             this.speciesPnET = speciesPnET;
             data.ColdKill = int.MaxValue;
             data.NSC = (ushort)speciesPnET.InitialNSC;
-
             // Initialize biomass assuming fixed concentration of NSC, convert gC to gDW
             data.TotalBiomass = (uint)Math.Max(1.0, NSC / (speciesPnET.DNSC * speciesPnET.CFracBiomass) * propBiomass) ;
             data.AGBiomass = (1 - speciesPnET.FracBelowG) * data.TotalBiomass + data.Fol;
             data.BiomassMax = data.TotalBiomass;
-
             float cohortLAI = 0;
             float cohortIdealFol = speciesPnET.FracFol * FActiveBiom * data.TotalBiomass;
             for (int i = 0; i < Globals.IMAX; i++)
                 cohortLAI += CalculateLAI(SpeciesPnET, cohortIdealFol, i, cohortLAI);
             data.LastLAI = cohortLAI;
-            
             data.LastAGBio = data.AGBiomass;
             data.CanopyLayerProp = data.LastLAI / speciesPnET.MaxLAI;
             if(cohortStacking)
                 data.CanopyLayerProp = 1.0f;
             data.CanopyGrowingSpace = 1.0f;
             data.LastSeasonFRad = new List<float>();
-
             firstYear = true;
-            data.UniversalData.Age = 1;
-            data.UniversalData.Biomass = (int)(data.AGBiomass * data.CanopyLayerProp);
-            data.UniversalData.ANPP = data.UniversalData.Biomass;
-
+            // data.UniversalData.Age = 1;
+            Age = 1;
+            // data.UniversalData.Biomass = (int)(data.AGBiomass * data.CanopyLayerProp);
+            Biomass = (int)(data.AGBiomass * data.CanopyLayerProp);
+            // data.UniversalData.ANPP = data.UniversalData.Biomass;
+            ANPP = Biomass;
             if (SiteName != null)
                 InitializeOutput(SiteName, year_of_birth);
         }
@@ -757,6 +825,9 @@ namespace Landis.Library.PnETCohorts
             this.species = species;
             speciesPnET = SpeciesParameters.SpeciesPnET.AllSpecies[species.Index];
             data = cohortData;
+            Age = cohortData.UniversalData.Age;
+            Biomass = cohortData.UniversalData.Biomass;
+            ANPP = cohortData.UniversalData.ANPP;
         }
 
         public Cohort(Cohort cohort)
@@ -771,10 +842,12 @@ namespace Landis.Library.PnETCohorts
             data.MaxFolYear = cohort.MaxFolYear;
             data.LastSeasonFRad = cohort.data.LastSeasonFRad;
             data.ColdKill = int.MaxValue;
-
-            data.UniversalData.Age = cohort.Age;
-            data.UniversalData.Biomass = (int)(data.AGBiomass * cohort.CanopyLayerProp);
-            data.UniversalData.ANPP = cohort.ANPP;
+            // data.UniversalData.Age = cohort.Age;
+            Age = cohort.Age;
+            // data.UniversalData.Biomass = (int)(data.AGBiomass * cohort.CanopyLayerProp);
+            Biomass = (int)(data.AGBiomass * cohort.CanopyLayerProp);
+            // data.UniversalData.ANPP = cohort.ANPP;
+            ANPP = cohort.ANPP;
         }
 
         public Cohort(Cohort cohort, ushort firstYear, string SiteName)
@@ -789,11 +862,12 @@ namespace Landis.Library.PnETCohorts
             data.MaxFolYear = cohort.MaxFolYear;
             data.LastSeasonFRad = cohort.data.LastSeasonFRad;
             data.ColdKill = int.MaxValue;
-
-            data.UniversalData.Age = cohort.Age;
-            data.UniversalData.Biomass = (int)(data.AGBiomass * cohort.CanopyLayerProp);
-            data.UniversalData.ANPP = cohort.ANPP;
-
+            // data.UniversalData.Age = cohort.Age;
+            Age = cohort.Age;
+            // data.UniversalData.Biomass = (int)(data.AGBiomass * cohort.CanopyLayerProp);
+            Biomass = (int)(data.AGBiomass * cohort.CanopyLayerProp);
+            // data.UniversalData.ANPP = cohort.ANPP;
+            ANPP = cohort.ANPP;
             if (SiteName != null)
                 InitializeOutput(SiteName, firstYear);
         }
@@ -801,7 +875,6 @@ namespace Landis.Library.PnETCohorts
         public Cohort(ISpeciesPnET speciesPnET, ushort age, int woodBiomass, string SiteName, ushort firstYear, bool cohortStacking)
         {
             InitializeSubLayers();
-
             species = (ISpecies)speciesPnET;
             this.speciesPnET = speciesPnET;
             float biomass = woodBiomass / (1 - speciesPnET.FracBelowG);
@@ -810,10 +883,10 @@ namespace Landis.Library.PnETCohorts
             data.LastSeasonFRad = new List<float>();
             data.adjFracFol = speciesPnET.MaxFracFol;
             data.ColdKill = int.MaxValue;
-            data.UniversalData.Age = age;
+            // data.UniversalData.Age = age;
+            Age = age;
             float cohortLAI = 0;
             float cohortIdealFol = speciesPnET.MaxFracFol * FActiveBiom * data.TotalBiomass;
-            
             for (int i = 0; i < Globals.IMAX; i++)
             {
                 float subLayerLAI = CalculateLAI(SpeciesPnET, cohortIdealFol, i);
@@ -821,25 +894,22 @@ namespace Landis.Library.PnETCohorts
                 if (Leaf_On)
                     LAI[index] = subLayerLAI;
             }
-            
             if (Leaf_On)
             {
                 data.Fol = cohortIdealFol;
                 data.MaxFolYear = cohortIdealFol;
             }
-            
             data.LastLAI = cohortLAI;
             data.CanopyLayerProp = data.LastLAI / speciesPnET.MaxLAI;
             if (cohortStacking)
                 data.CanopyLayerProp = 1.0f;
-
             data.CanopyGrowingSpace = 1.0f;
             data.AGBiomass = (1 - this.speciesPnET.FracBelowG) * data.TotalBiomass + data.Fol;
             data.LastAGBio = data.AGBiomass;
             data.NSC = this.speciesPnET.DNSC * FActiveBiom * (data.TotalBiomass + data.Fol) * speciesPnET.CFracBiomass;
-
-            data.UniversalData.Biomass = (int)(data.AGBiomass * data.CanopyLayerProp);
-
+            // data.UniversalData.Biomass = (int)(data.AGBiomass * data.CanopyLayerProp);
+            Biomass = (int)(data.AGBiomass * data.CanopyLayerProp);
+            ANPP = 0.0;
             if (SiteName != null)
                 InitializeOutput(SiteName, firstYear);
         }
@@ -854,7 +924,6 @@ namespace Landis.Library.PnETCohorts
             data.BiomassMax = Math.Max(biomass,maxBiomass);
             data.LastSeasonFRad = new List<float>();
             data.LastSeasonFRad.Add(lastSeasonAvgFrad);
-            
             CalcAdjFracFol();
             data.ColdKill = int.MaxValue;
             float cohortLAI = 0;
@@ -866,13 +935,11 @@ namespace Landis.Library.PnETCohorts
                 if (Leaf_On)
                     LAI[index] = subLayerLAI;
             }
-
             if (Leaf_On)
             {
                 data.Fol = cohortIdealFol;
                 data.MaxFolYear = cohortIdealFol;
             }
-
             data.LastLAI = cohortLAI;
             data.CanopyLayerProp = data.LastLAI / speciesPnET.MaxLAI;
             if (cohortStacking)
@@ -881,10 +948,11 @@ namespace Landis.Library.PnETCohorts
             data.AGBiomass = (1 - this.speciesPnET.FracBelowG) * data.TotalBiomass + data.Fol;
             data.LastAGBio = data.AGBiomass;
             data.NSC = this.speciesPnET.DNSC * FActiveBiom * (data.TotalBiomass + data.Fol) * speciesPnET.CFracBiomass;
-
-            data.UniversalData.Age = age;
-            data.UniversalData.Biomass = (int)(data.AGBiomass * data.CanopyLayerProp);
-
+            // data.UniversalData.Age = age;
+            Age = age;
+            // data.UniversalData.Biomass = (int)(data.AGBiomass * data.CanopyLayerProp);
+            Biomass = (int)(data.AGBiomass * data.CanopyLayerProp);
+            ANPP = 0.0;
             if (SiteName != null)
                 InitializeOutput(SiteName, firstYear);
         }
@@ -910,28 +978,22 @@ namespace Landis.Library.PnETCohorts
             // Depth of the canopy is expressed by the mass of foliage above this subcanopy layer (i.e. slwdel * index/imax *fol)
             data.LAI[index] = CalculateLAI(speciesPnET, data.Fol, index);
 
-            // Precipitation interception has a max in the upper canopy and decreases exponentially through the canopy
-            //Interception[index] = PrecInByCanopyLayer * (float)(1 - Math.Exp(-1 * ecoregion.PrecIntConst * LAI[index]));
-            //if (Interception[index] > PrecInByCanopyLayer) throw new System.Exception("Error adding water, PrecInByCanopyLayer = " + PrecInByCanopyLayer + " Interception[index] = " + Interception[index]);
-
             if (MeltInByCanopyLayer > 0)
             {
                 // Add melted snow water to soil moisture
                 // Instantaneous runoff (excess of porosity + RunoffCapture)
                 float waterCapacity = siteCohort.Ecoregion.Porosity * siteCohort.Ecoregion.RootingDepth * frostFreeProp; //mm
                 float meltrunoff = Math.Min(MeltInByCanopyLayer, Math.Max(hydrology.Water * siteCohort.Ecoregion.RootingDepth * frostFreeProp + MeltInByCanopyLayer - waterCapacity, 0));
-                //if ((hydrology.Water + meltrunoff) > (ecoregion.Porosity + ecoregion.RunoffCapture))
-                //    meltrunoff = (hydrology.Water + meltrunoff) - (ecoregion.Porosity + ecoregion.RunoffCapture);
                 float capturedRunoff = 0;
-                if ((siteCohort.Ecoregion.RunoffCapture > 0) & (meltrunoff >0))
+                if ((siteCohort.Ecoregion.RunoffCapture > 0) & (meltrunoff > 0))
                 {
-                    capturedRunoff = Math.Max(0, Math.Min(meltrunoff, (siteCohort.Ecoregion.RunoffCapture - hydrology.SurfaceWater)));
+                    capturedRunoff = Math.Max(0, Math.Min(meltrunoff, siteCohort.Ecoregion.RunoffCapture - hydrology.SurfaceWater));
                     hydrology.SurfaceWater += capturedRunoff;
                 }
-                hydrology.RunOff += (meltrunoff - capturedRunoff);
+                hydrology.RunOff += meltrunoff - capturedRunoff;
 
                 success = hydrology.AddWater(MeltInByCanopyLayer - meltrunoff, siteCohort.Ecoregion.RootingDepth * frostFreeProp);
-                if (success == false) throw new Exception("Error adding water, MeltInByCanopyLayer = " + MeltInByCanopyLayer + "; water = " + hydrology.Water + "; meltrunoff = " + meltrunoff + "; ecoregion = " + siteCohort.Ecoregion.Name + "; site = " + siteCohort.Site.Location);
+                if (!success) throw new Exception("Error adding water, MeltInByCanopyLayer = " + MeltInByCanopyLayer + "; water = " + hydrology.Water + "; meltrunoff = " + meltrunoff + "; ecoregion = " + siteCohort.Ecoregion.Name + "; site = " + siteCohort.Site.Location);
             }
             float precipIn = 0;
             if (PrecInByCanopyLayer > 0)
@@ -950,42 +1012,27 @@ namespace Landis.Library.PnETCohorts
                         capturedRunoff = Math.Max(0, Math.Min(rainrunoff, (siteCohort.Ecoregion.RunoffCapture - hydrology.SurfaceWater)));
                         hydrology.SurfaceWater += capturedRunoff;
                     }
-                    hydrology.RunOff += (rainrunoff - capturedRunoff);
-
+                    hydrology.RunOff += rainrunoff - capturedRunoff;
                     precipIn = PrecInByCanopyLayer - rainrunoff; //mm
-
                     // Add incoming precipitation to soil moisture
                     success = hydrology.AddWater(precipIn, siteCohort.Ecoregion.RootingDepth * frostFreeProp);
-                    if (success == false) throw new Exception("Error adding water, waterIn = " + precipIn + "; water = " + hydrology.Water + "; rainrunoff = " + rainrunoff + "; ecoregion = " + siteCohort.Ecoregion.Name + "; site = " + siteCohort.Site.Location);
-
+                    if (!success)
+                        throw new Exception("Error adding water, waterIn = " + precipIn + "; water = " + hydrology.Water + "; rainrunoff = " + rainrunoff + "; ecoregion = " + siteCohort.Ecoregion.Name + "; site = " + siteCohort.Site.Location);
                     float leakage = Math.Max((float)leakageFrac * (hydrology.Water - siteCohort.Ecoregion.FieldCap), 0) * siteCohort.Ecoregion.RootingDepth * frostFreeProp; //mm
                     hydrology.Leakage += leakage;
-
-
                     // Remove fast leakage
                     success = hydrology.AddWater(-1 * leakage, siteCohort.Ecoregion.RootingDepth * frostFreeProp);
-                    if (success == false) throw new Exception("Error adding water, Hydrology.Leakage = " + hydrology.Leakage + "; water = " + hydrology.Water + "; ecoregion = " + siteCohort.Ecoregion.Name + "; site = " + siteCohort.Site.Location);
-
-                    // Evaporation - moved to SiteCohorts.Grow after transpiration (psn)
-                    /*float evaporationEvent = 0;
-                    if (frostFreeProp > 0 && groundPETbyEvent > 0)
-                    {
-                        evaporationEvent = hydrology.CalculateEvaporation(siteCohort, groundPETbyEvent); //mm
-                    }
-                    success = hydrology.AddWater(-1 * evaporationEvent, siteCohort.Ecoregion.RootingDepth * frostFreeProp);
-                    if (success == false)
-                    {
-                        throw new System.Exception("Error adding water, evaporation = " + evaporationEvent + "; water = " + hydrology.Water + "; ecoregion = " + siteCohort.Ecoregion.Name + "; site = " + siteCohort.Site.Location);
-                    }
-                    hydrology.Evaporation += evaporationEvent;*/
+                    if (!success)
+                        throw new Exception("Error adding water, Hydrology.Leakage = " + hydrology.Leakage + "; water = " + hydrology.Water + "; ecoregion = " + siteCohort.Ecoregion.Name + "; site = " + siteCohort.Site.Location);
 
                     // Add surface water to soil
                     if (hydrology.SurfaceWater > 0)
                     {
-                        float surfaceInput = Math.Min(hydrology.SurfaceWater, ((siteCohort.Ecoregion.Porosity - hydrology.Water) * siteCohort.Ecoregion.RootingDepth * frostFreeProp));
+                        float surfaceInput = Math.Min(hydrology.SurfaceWater, (siteCohort.Ecoregion.Porosity - hydrology.Water) * siteCohort.Ecoregion.RootingDepth * frostFreeProp);
                         hydrology.SurfaceWater -= surfaceInput;
                         success = hydrology.AddWater(surfaceInput, siteCohort.Ecoregion.RootingDepth * frostFreeProp);
-                        if (success == false) throw new Exception("Error adding water, Hydrology.SurfaceWater = " + hydrology.SurfaceWater + "; water = " + hydrology.Water + "; ecoregion = " + siteCohort.Ecoregion.Name + "; site = " + siteCohort.Site.Location);
+                        if (!success)
+                            throw new Exception("Error adding water, Hydrology.SurfaceWater = " + hydrology.SurfaceWater + "; water = " + hydrology.Water + "; ecoregion = " + siteCohort.Ecoregion.Name + "; site = " + siteCohort.Site.Location);
 
                     }
                 }
@@ -995,42 +1042,30 @@ namespace Landis.Library.PnETCohorts
                 // Leakage only occurs following precipitation events or incoming melt water
                 if (MeltInByCanopyLayer > 0)
                 {
-
                     float leakage = Math.Max((float)leakageFrac * (hydrology.Water - siteCohort.Ecoregion.FieldCap), 0) * siteCohort.Ecoregion.RootingDepth * frostFreeProp; //mm
                     hydrology.Leakage += leakage;
                     // Remove fast leakage
                     success = hydrology.AddWater(-1 * leakage, siteCohort.Ecoregion.RootingDepth * frostFreeProp);
-                    if (success == false) throw new Exception("Error adding water, Hydrology.Leakage = " + hydrology.Leakage + "; water = " + hydrology.Water + "; ecoregion = " + siteCohort.Ecoregion.Name + "; site = " + siteCohort.Site.Location);
-
+                    if (!success)
+                        throw new Exception("Error adding water, Hydrology.Leakage = " + hydrology.Leakage + "; water = " + hydrology.Water + "; ecoregion = " + siteCohort.Ecoregion.Name + "; site = " + siteCohort.Site.Location);
                     // Add surface water to soil
                     if (hydrology.SurfaceWater > 0)
                     {
-                        float surfaceInput = Math.Min(hydrology.SurfaceWater, ((siteCohort.Ecoregion.Porosity - hydrology.Water) * siteCohort.Ecoregion.RootingDepth * frostFreeProp));
+                        float surfaceInput = Math.Min(hydrology.SurfaceWater, (siteCohort.Ecoregion.Porosity - hydrology.Water) * siteCohort.Ecoregion.RootingDepth * frostFreeProp);
                         hydrology.SurfaceWater -= surfaceInput;
                         success = hydrology.AddWater(surfaceInput, siteCohort.Ecoregion.RootingDepth * frostFreeProp);
-                        if (success == false) throw new Exception("Error adding water, Hydrology.SurfaceWater = " + hydrology.SurfaceWater + "; water = " + hydrology.Water + "; ecoregion = " + siteCohort.Ecoregion.Name + "; site = " + siteCohort.Site.Location);
+                        if (!success)
+                            throw new Exception("Error adding water, Hydrology.SurfaceWater = " + hydrology.SurfaceWater + "; water = " + hydrology.Water + "; ecoregion = " + siteCohort.Ecoregion.Name + "; site = " + siteCohort.Site.Location);
                     }
                 }
             }
                 
-            
-            //// Adjust soil water for freezing - Now done when calculating frozen depth
-            //if (frostFreeProp < 1.0)
-            //{
-            //    // water in frozen soil is not accessible - treat it as if it leaked out
-            //    float frozenLimit = ecoregion.FieldCap * frostFreeProp;
-            //    float frozenWater = hydrology.Water - frozenLimit;
-            //    // Remove frozen water
-            //    success = hydrology.AddWater(-1 * frozenWater);
-            //    if (success == false) throw new System.Exception("Error adding water, frozenWater = " + frozenWater + "; water = " + hydrology.Water + "; ecoregion = " + ecoregion.Name + "; site = " + site.Location);
-            //}
             // Maintenance respiration depends on biomass,  non soluble carbon and temperature
-            data.MaintenanceRespiration[index] = (1 / (float)Globals.IMAX) * (float)Math.Min(NSC, variables[Species.Name].MaintRespFTempResp * (data.TotalBiomass * speciesPnET.CFracBiomass));//gC //IMAXinverse
+            data.MaintenanceRespiration[index] = (1 / (float)Globals.IMAX) * (float)Math.Min(NSC, variables[Species.Name].MaintRespFTempResp * (data.TotalBiomass * speciesPnET.CFracBiomass));  //gC //IMAXinverse
             // Subtract mainenance respiration (gC/mo)
             data.NSC -= MaintenanceRespiration[index];
             if (data.NSC < 0)
-                data.NSC = 0f;
-
+                data.NSC = 0.0f;
 
             // Woody decomposition: do once per year to reduce unnescessary computation time so with the last subcanopy layer 
             if (index == Globals.IMAX - 1)
@@ -1042,14 +1077,12 @@ namespace Landis.Library.PnETCohorts
                     {
                         //Check if nscfrac is below threshold to determine if cohort is alive
                         if (!IsAlive)
-                        {
-                            data.NSC = 0.0F;  // if cohort is dead, nsc goes to zero and becomes functionally dead even though not removed until end of timestep
-                        }
+                            data.NSC = 0.0f;  // if cohort is dead, nsc goes to zero and becomes functionally dead even though not removed until end of timestep
                         else if (Globals.ModelCore.CurrentTime > 0 && TotalBiomass < (uint)speciesPnET.InitBiomass)  //Check if biomass < Initial Biomass -> cohort dies
                         {
-                            data.NSC = 0.0F;  // if cohort is dead, nsc goes to zero and becomes functionally dead even though not removed until end of timestep
+                            data.NSC = 0.0f;  // if cohort is dead, nsc goes to zero and becomes functionally dead even though not removed until end of timestep
                             data.Leaf_On = false;
-                            data.NSC = 0.0F;
+                            data.NSC = 0.0f;
                             float foliageSenescence = FoliageSenescence();
                             data.LastFoliageSenescence = foliageSenescence;
                             siteCohort.AddLitter(foliageSenescence * data.CanopyLayerProp, SpeciesPnET);// Using Canopy proportioning
@@ -1058,23 +1091,19 @@ namespace Landis.Library.PnETCohorts
                     float woodSenescence = Senescence();
                     data.LastWoodySenescence = woodSenescence;
                     siteCohort.AddWoodyDebris(woodSenescence * data.CanopyLayerProp, speciesPnET.KWdLit); // Using Canopy proportioning
-                    
-
-
                     // Release of nsc, will be added to biomass components next year
                     // Assumed that NSC will have a minimum concentration, excess is allocated to biomass
                     float Allocation = Math.Max(NSC - (speciesPnET.DNSC * FActiveBiom * data.TotalBiomass * speciesPnET.CFracBiomass), 0);
                     data.TotalBiomass += Allocation / speciesPnET.CFracBiomass;  // convert gC to gDW
                     data.AGBiomass = (1 - speciesPnET.FracBelowG) * data.TotalBiomass + data.Fol;
-                    data.UniversalData.Biomass = (int)(data.AGBiomass * data.CanopyLayerProp);
+                    // data.UniversalData.Biomass = (int)(data.AGBiomass * data.CanopyLayerProp);
+                    Biomass = (int)(data.AGBiomass * data.CanopyLayerProp);
                     data.BiomassMax = Math.Max(BiomassMax, data.TotalBiomass);
                     data.NSC -= Allocation;
                     if (data.NSC < 0)
                         data.NSC = 0f;
-                    data.UniversalData.Age++;
-
-                    //firstDefol = true;
-                    // firstAlloc = true;
+                    // data.UniversalData.Age++;
+                    Age += 1;
                 }
             }
             // Phenology: do once per cohort per month, using the first sublayer 
@@ -1082,9 +1111,9 @@ namespace Landis.Library.PnETCohorts
             {
                 if (coldKillBoolean)
                 {
-                    data.ColdKill = (int)Math.Floor(variables.Tave - (3.0 * siteCohort.Ecoregion.WinterSTD));
+                    data.ColdKill = (int)Math.Floor(variables.Tave - (3.0f * siteCohort.Ecoregion.WinterSTD));
                     data.Leaf_On = false;
-                    data.NSC = 0.0F;
+                    data.NSC = 0.0f;
                     float foliageSenescence = FoliageSenescence();
                     data.LastFoliageSenescence = foliageSenescence;
                     siteCohort.AddLitter(foliageSenescence * data.CanopyLayerProp, SpeciesPnET); // Using Canopy proportioning
@@ -1108,13 +1137,9 @@ namespace Landis.Library.PnETCohorts
                         if (frostFreeProp > 0)
                         {
                             if (data.Leaf_On == false) // LeafOn becomes true for the first time in a year
-                            {
                                 growMonth = 1;
-                            }
                             else
-                            {
                                 growMonth += 1;
-                            }
                             data.Leaf_On = true;
                         }
                     }
@@ -1472,13 +1497,13 @@ namespace Landis.Library.PnETCohorts
 
                 // Subtract transpiration from hydrology
                 success = hydrology.AddWater(-1 * Transpiration[index], siteCohort.Ecoregion.RootingDepth * frostFreeProp);
-                if (success == false) throw new Exception("Error adding water, Transpiration = " + Transpiration[index] + " water = " + hydrology.Water + "; ecoregion = " + siteCohort.Ecoregion.Name + "; site = " + siteCohort.Site.Location);
+                if (!success) throw new Exception("Error adding water, Transpiration = " + Transpiration[index] + " water = " + hydrology.Water + "; ecoregion = " + siteCohort.Ecoregion.Name + "; site = " + siteCohort.Site.Location);
                 if (hydrology.SurfaceWater > 0)
                 {
                     float surfaceInput = Math.Min(hydrology.SurfaceWater, ((siteCohort.Ecoregion.Porosity - hydrology.Water) * siteCohort.Ecoregion.RootingDepth * frostFreeProp));
                     hydrology.SurfaceWater -= surfaceInput;
                     success = hydrology.AddWater(surfaceInput, siteCohort.Ecoregion.RootingDepth * frostFreeProp);
-                    if (success == false) throw new Exception("Error adding water, Hydrology.SurfaceWater = " + hydrology.SurfaceWater + "; water = " + hydrology.Water + "; ecoregion = " + siteCohort.Ecoregion.Name + "; site = " + siteCohort.Site.Location);
+                    if (!success) throw new Exception("Error adding water, Hydrology.SurfaceWater = " + hydrology.SurfaceWater + "; water = " + hydrology.Water + "; ecoregion = " + siteCohort.Ecoregion.Name + "; site = " + siteCohort.Site.Location);
                 }
 
 
@@ -1651,7 +1676,7 @@ namespace Landis.Library.PnETCohorts
         /// <summary>
         /// Occurs when a cohort is killed by an age-only disturbance.
         /// </summary>
-        public static event DeathEventHandler<DeathEventArgs> AgeOnlyDeathEvent;
+        public new static event DeathEventHandler<DeathEventArgs> AgeOnlyDeathEvent;
 
         /// <summary>
         /// Occurs when a cohort dies either due to senescence or biomass
@@ -1829,7 +1854,7 @@ namespace Landis.Library.PnETCohorts
             data.TotalBiomass -= senescence;
             data.AGBiomass = (1 - speciesPnET.FracBelowG) * data.TotalBiomass + data.Fol;
             data.BiomassMax = Math.Max(data.BiomassMax, data.TotalBiomass);
-            data.UniversalData.Biomass = (int)(data.AGBiomass * data.CanopyLayerProp);
+            Biomass = (int)(data.AGBiomass * data.CanopyLayerProp);
             return senescence;
         }
 
@@ -1846,19 +1871,21 @@ namespace Landis.Library.PnETCohorts
 
         public void ReduceBiomass(object sitecohorts, double fraction, ExtensionType disturbanceType)
         {
-            if (!((SiteCohorts)sitecohorts).DisturbanceTypesReduced.Contains(disturbanceType))
+            // A harvest that removes nothing from this cohort leaves the site's dead pools alone
+            if ((fraction > 0.0 || disturbanceType.Name != "disturbance:harvest")
+                && !((SiteCohorts)sitecohorts).DisturbanceTypesReduced.Contains(disturbanceType))
             {
                 Allocation.ReduceDeadPools(sitecohorts, disturbanceType);  // Reduce dead pools before adding through Allocation
                 ((SiteCohorts)sitecohorts).DisturbanceTypesReduced.Add(disturbanceType);
             }
             Allocation.Allocate(sitecohorts, this, disturbanceType, fraction);
 
-            data.TotalBiomass *= (float)(1.0 - fraction);
-            data.AGBiomass = ((1 - speciesPnET.FracBelowG) * data.TotalBiomass + data.Fol);
-            data.BiomassMax = Math.Max(data.BiomassMax, data.TotalBiomass);
+            data.TotalBiomass *= (float)(1.0f - fraction);
             Fol *= (float)(1.0 - fraction);
+            data.AGBiomass = (1 - speciesPnET.FracBelowG) * data.TotalBiomass + data.Fol;
+            data.BiomassMax = Math.Max(data.BiomassMax, data.TotalBiomass);
             data.MaxFolYear = Math.Max(data.MaxFolYear, Fol);
-            data.UniversalData.Biomass = (int)(data.AGBiomass * data.CanopyLayerProp);
+            Biomass = (int)(data.AGBiomass * data.CanopyLayerProp);
         }
 
         public float CalculateLAI(ISpeciesPnET species, float fol, int index)
@@ -1871,8 +1898,8 @@ namespace Landis.Library.PnETCohorts
                 for (int i = 0; i < index; i++)
                     LAISum += LAI[i];
             }
-            float LAIlayerMax = (float)Math.Max(0.01, 25.0F - LAISum); // Cohort LAI is capped at 25; once LAI reaches 25 subsequent sublayers get LAI of 0.01
-            float LAIlayer = (1 / (float)Globals.IMAX) * fol / (species.SLWmax - species.SLWDel * index * (1 / (float)Globals.IMAX) * fol);
+            float LAIlayerMax = (float)Math.Max(0.01f, 25.0f - LAISum); // Cohort LAI is capped at 25; once LAI reaches 25 subsequent sublayers get LAI of 0.01
+            float LAIlayer = 1 / (float)Globals.IMAX * fol / (species.SLWmax - species.SLWDel * index * (1 / (float)Globals.IMAX) * fol);
             if (fol > 0 && LAIlayer <= 0)
             {
                 Globals.ModelCore.UI.WriteLine("\n Warning: LAI was calculated to be negative for " + species.Name + ". This could be caused by a low value for SLWmax.  LAI applied in this case is a max of 25 for each cohort.");
